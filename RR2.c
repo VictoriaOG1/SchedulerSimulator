@@ -1,12 +1,13 @@
 // #include&lt;stdio.h&gt; este include tiene este &lt le pueden revisar?
 #include<stdio.h> 
 // the structure for round robin scheduling algorithm with gantt chart.
-
+//-------------para revisar--------
 typedef struct struct-rra
 {
 int process_id, burst_time, burst_time_bal;
 int total_average_time, waiting_time;
 } PCB;
+//--------------------------------
 int main()    {
   struct-rra process[10];
   int i,j,k,n,tq;
