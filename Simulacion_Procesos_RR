@@ -1,3 +1,5 @@
+//ESTA EN C++, PERO ES MAS PARA VER LA LOGICA 
+
 #include <iostream>
 #define limite 5
 using namespace std;
