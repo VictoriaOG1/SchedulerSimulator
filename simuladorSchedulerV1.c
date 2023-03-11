@@ -60,6 +60,7 @@ void roundRobin(struct Process pro[], int n, int quantum)
                 // el proceso se completará en esta iteración, así que actualiza el tiempo restante.
                 if (remainingTime[i] <= quantum)
                 {
+                    printf("Proceso %d: Tiempo %d - %d\n", pro[i].id, time, time + remainingTime[i]);
                     time += remainingTime[i];
                     remainingTime[i] = 0;
 
@@ -78,6 +79,7 @@ void roundRobin(struct Process pro[], int n, int quantum)
                 // el proceso todavía no se ha completado, así que se ejecuta durante el quantum.
                 else
                 {
+                    printf("Proceso %d: Tiempo %d - %d\n", pro[i].id, time, time + quantum); 
                     time += quantum;
                     remainingTime[i] -= quantum;
                 }
@@ -119,7 +121,7 @@ void roundRobin(struct Process pro[], int n, int quantum)
 int main()
 {
     int i, n, quantum;
-    printf("Ingrese el número de Pro: ");
+    printf("Ingrese el número de Proceso: ");
     scanf("%d", &n);
 
     struct Process pro[n];
