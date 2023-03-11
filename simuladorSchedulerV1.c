@@ -51,7 +51,7 @@ void roundRobin(struct Process pro[], int n, int quantum)
 
                 // Si es la primera vez que se ejecuta el proceso,
                 // registra su tiempo de respuesta como el tiempo actual menos su tiempo de llegada.
-                if (pro[i].responseTime == -1)
+                if (pro[i].responseTime == 0)
                 {
                     pro[i].responseTime = time - pro[i].arrivalTime;
                 }
