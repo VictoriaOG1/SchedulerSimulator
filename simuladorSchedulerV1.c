@@ -10,6 +10,8 @@ struct Process
     int responseTime;
     int waitingTime;
     int exitTime;
+    int serviceTime;
+    int indexService;
 };
 
 void roundRobin(struct Process pro[], int n, int quantum)
@@ -66,9 +68,12 @@ void roundRobin(struct Process pro[], int n, int quantum)
 
                     // Registra el tiempo de finalización del proceso.
                     pro[i].exitTime = time;
-
+                    //Calcula el tiempo de servicio del proceso 
+                    pro[i].serviceTime = pro[i].exitTime - pro[i].arrivalTime;
                     // Calcula el tiempo de espera del proceso.
-                    pro[i].waitingTime = pro[i].exitTime - pro[i].arrivalTime - pro[i].brustTime;
+                    pro[i].waitingTime = pro[i].serviceTime - pro[i].brustTime;
+                    //Calculo los indices de servicio
+		            pro[i].indexService = pro[i].brustTime / pro[i].serviceTime;
 
                     // Calcula los tiempos de espera y de respuesta promedio de todos los procesos.
                     totalWaitTime += pro[i].waitingTime;
@@ -109,10 +114,10 @@ void roundRobin(struct Process pro[], int n, int quantum)
     float avgWaitTime = (float)totalWaitTime / (float)n;
 
     // Imprime los resultados.
-    printf("\nProceso\t Tiempo de Llegada\t Tiempo de Ejecución\t Tiempo de Respuesta\t Tiempo de Espera\n");
+    printf("\nProceso\t Tiempo de Llegada\t Tiempo de Ejecución\t Tiempo de Respuesta\t Tiempo Final\t Tiempo de servicio\t Tiempo de Espera\t Indice de servicio\n");
     for (i = 0; i < n; i++)
     {
-        printf("%d\t\t %d\t\t\t %d\t\t\t %d\t\t\t %d\n", pro[i].id, pro[i].arrivalTime, pro[i].brustTime, pro[i].responseTime, pro[i].waitingTime);
+        printf("%d\t\t %d\t\t\t %d\t\t\t %d\t\t\t %d\t\t\t %d\t\t\t %d\t\t\t %d\t\t\t\n", pro[i].id, pro[i].arrivalTime, pro[i].brustTime, pro[i].responseTime,pro[i].exitTime ,pro[i].serviceTime, pro[i].waitingTime,pro[i].indexService);
     }
     printf("\nTiempo de Respuesta Promedio = %.2f", avgResponseTime);
     printf("\nTiempo de Espera Promedio = %.2f", avgWaitTime);
@@ -128,10 +133,10 @@ int main()
 
     for (i = 0; i < n; i++)
     {
-        printf("Ingrese el tiempo de llegada para el Process %d: ", i + 1);
+        printf("Ingrese el tiempo de llegada para el Proceso %d: ", i + 1);
         scanf("%d", &pro[i].arrivalTime);
 
-        printf("Ingrese el tiempo de CPU para el Process %d: ", i + 1);
+        printf("Ingrese el tiempo de CPU para el Proceso %d: ", i + 1);
         scanf("%d", &pro[i].brustTime);
 
         pro[i].id = i + 1;
