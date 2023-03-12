@@ -1,5 +1,7 @@
 #include <stdio.h>
+#include <string.h>
 
+int reg[3] = {0,0,0};
 // Estructura de nuestro proceso
 struct Process
 {
@@ -13,18 +15,22 @@ struct Process
     int serviceTime;
 };
 // Intercambia las direcciones de memoria dentro del array
-void swap(struct Process* a, struct Process* b) {
+void swap(struct Process *a, struct Process *b)
+{
     struct Process temp = *a;
     *a = *b;
     *b = temp;
 }
 // Divide una particion del array sobre un pivote y mueve los mayores a este a un lado y menores al otro
-int partition(struct Process arr[], int low, int high) {
+int partition(struct Process arr[], int low, int high)
+{
     int pivot = arr[high].arrivalTime;
     int i = (low - 1);
- 
-    for (int j = low; j <= high - 1; j++) {
-        if (arr[j].arrivalTime < pivot) {
+
+    for (int j = low; j <= high - 1; j++)
+    {
+        if (arr[j].arrivalTime < pivot)
+        {
             i++;
             swap(&arr[i], &arr[j]);
         }
@@ -32,18 +38,36 @@ int partition(struct Process arr[], int low, int high) {
     swap(&arr[i + 1], &arr[high]);
     return (i + 1);
 }
-// Utiliza recursividad para ordenar el arreglo de procesos (para asegurarnos que esten en order de llegada)
-void quicksort(struct Process arr[], int low, int high) {
-    if (low < high) {
+// Utiliza recursividad para ordenar el arreglo de procesos (para asegurarnos que esten en orden de llegada)
+void quicksort(struct Process arr[], int low, int high)
+{
+    if (low < high)
+    {
         int pi = partition(arr, low, high);
- 
+
         quicksort(arr, low, pi - 1);
         quicksort(arr, pi + 1, high);
     }
 }
 
+void contextChange(int index, int processingTime,struct Process pro[], int mem[])
+{
+    for (int r = 0; r < 3; r++)
+    { // Se carga informacion del proceso en memoria
+        memcpy(&reg[r], &mem[r + ((pro[index].id - 1) * 3)], sizeof(int));
+    }
+    for (int t = 0; t < processingTime; t++)
+    { // Se realiza una operacion con esos datos
+        reg[2] = reg[0] + reg[1];
+        reg[0] = reg[2];
+    }
+    for (int r = 0; r < 3; r++)
+    { // Se guarda el estado de la informacion en memoria
+        memcpy(&mem[r + ((pro[index].id - 1) * 3)], &reg[r], sizeof(int));
+    }
+}
 //Funcion para simular un scheduler con algoritmo Round Robin 
-void roundRobin(struct Process pro[], int n, int quantum)
+void roundRobin(struct Process pro[], int n, int quantum, int mem[])
 {
     int time = 0;
     int i;
@@ -91,13 +115,14 @@ void roundRobin(struct Process pro[], int n, int quantum)
                 // el proceso se completara en esta iteracion, asi que actualiza el tiempo restante.
                 if (remainingTime[i] <= quantum)
                 {
-                    printf("Proceso %d: Tiempo %d - %d\n", pro[i].id, time, time + remainingTime[i]);
+                    contextChange(i,remainingTime[i],pro,mem);
+                    printf("Proceso %d: Tiempo %d - %d || Last calculated:%d\n", pro[i].id, time, time + remainingTime[i], reg[2]);
                     time += remainingTime[i];
                     remainingTime[i] = 0;
 
                     // Registra el tiempo de finalizacion del proceso.
                     pro[i].exitTime = time;
-                    //Calcula el tiempo de servicio del proceso 
+                    // Calcula el tiempo de servicio del proceso
                     pro[i].serviceTime = pro[i].exitTime - pro[i].arrivalTime;
                     // Calcula el tiempo de espera del proceso.
                     pro[i].waitingTime = pro[i].serviceTime - pro[i].burstTime;
@@ -113,7 +138,8 @@ void roundRobin(struct Process pro[], int n, int quantum)
                 // el proceso todavia no se ha completado, asi que se ejecuta durante el quantum.
                 else
                 {
-                    printf("Proceso %d: Tiempo %d - %d\n", pro[i].id, time, time + quantum); 
+                    contextChange(i,quantum,pro,mem);
+                    printf("Proceso %d: Tiempo %d - %d || Last calculated:%d\n", pro[i].id, time, time + quantum, reg[2]);
                     time += quantum;
                     remainingTime[i] -= quantum;
                 }
@@ -156,6 +182,12 @@ void roundRobin(struct Process pro[], int n, int quantum)
     printf("\nÍndice de servicio = %.2f \n", serviceIndex);
 }
 
+void FIFO()
+{
+    // sum = x + y;
+    // x = sum;
+}
+
 int main()
 {
     int i, n, quantum;
@@ -165,6 +197,7 @@ int main()
     scanf("%d", &n);
 
     struct Process pro[n];
+    int memory[3 * n];
 
     for (i = 0; i < n; i++)
     {
@@ -175,19 +208,24 @@ int main()
         scanf("%d", &pro[i].burstTime);
 
         pro[i].id = i + 1;
-        pro[i].state = 0; //Procesos no inicializados 
+        pro[i].state = 0; // procesos no iniciados
         pro[i].responseTime = -1;
+        memory[i],memory[i+1],memory[i+2] = 1;
     }
 
     printf("Ingrese el quantum para el algoritmo de round robin: ");
     scanf("%d", &quantum);
 
     //Ordenamiento del arreglo segun su tiempo de llegada
-    quicksort(pro,0, n-1);
+    quicksort(pro, 0, n - 1);
 
-    printf("\nRound Robin Scheduler: \n");
+    printf("\nOrdered by Arrival:\n");
+    for (i = 0; i < n; i++)
+    {
+        printf("%d: Process %d\n", i, pro[i].id);
+    }
     //Se realiza el scheduling
-    roundRobin(pro, n, quantum);
+    roundRobin(pro, n, quantum, memory);
 
     return 0;
 }
