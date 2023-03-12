@@ -186,7 +186,7 @@ int main()
     //Ordenamiento del arreglo según su tiempo de llegada
     quicksort(pro,0, n-1);
 
-    printf("Scheduler: \n");
+    printf("\nRound Robin Scheduler: \n");
     //Se realiza el scheduling
     roundRobin(pro, n, quantum);
 
