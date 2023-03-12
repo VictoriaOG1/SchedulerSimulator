@@ -14,6 +14,35 @@ struct Process
     int indexService;
 };
 
+void swap(struct Process* a, struct Process* b) {
+    struct Process temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int partition(struct Process arr[], int low, int high) {
+    int pivot = arr[high].arrivalTime;
+    int i = (low - 1);
+ 
+    for (int j = low; j <= high - 1; j++) {
+        if (arr[j].arrivalTime < pivot) {
+            i++;
+            swap(&arr[i], &arr[j]);
+        }
+    }
+    swap(&arr[i + 1], &arr[high]);
+    return (i + 1);
+}
+
+void quicksort(struct Process arr[], int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+ 
+        quicksort(arr, low, pi - 1);
+        quicksort(arr, pi + 1, high);
+    }
+}
+
 void roundRobin(struct Process pro[], int n, int quantum)
 {
     int time = 0;
@@ -146,6 +175,7 @@ int main()
     printf("Ingrese el quantum para el algoritmo de Round Robin: ");
     scanf("%d", &quantum);
 
+    quicksort(pro,0,n-1);
     roundRobin(pro, n, quantum);
 
     return 0;
