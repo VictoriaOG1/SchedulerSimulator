@@ -14,10 +14,11 @@ struct Process
     int indexService;
 };
 
+//Función para simular un scheduler con algoritmo Round Robin 
 void roundRobin(struct Process pro[], int n, int quantum)
 {
     int time = 0;
-    int i, j;
+    int i;
     int remainingTime[n];
     int flag, totalWaitTime = 0, totalResponseTime = 0;
 
@@ -125,11 +126,13 @@ void roundRobin(struct Process pro[], int n, int quantum)
 
 int main()
 {
+    //Variables
     int i, n, quantum;
+    struct Process pro[n];
+
+    //Ingreso de datos: número de procesos, el burst time. el arrival time de cada proceso y el quantum
     printf("Ingrese el número de Proceso: ");
     scanf("%d", &n);
-
-    struct Process pro[n];
 
     for (i = 0; i < n; i++)
     {
@@ -140,12 +143,13 @@ int main()
         scanf("%d", &pro[i].brustTime);
 
         pro[i].id = i + 1;
-        pro[i].state = 0; // procesos no iniciados
+        pro[i].state = 0; //Procesos no inicializados 
     }
 
     printf("Ingrese el quantum para el algoritmo de Round Robin: ");
     scanf("%d", &quantum);
 
+    //Se ejecuta el scheduler
     roundRobin(pro, n, quantum);
 
     return 0;
