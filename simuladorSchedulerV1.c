@@ -13,14 +13,13 @@ struct Process
     int serviceTime;
     int indexService;
 };
-
-/*** FUNCIONES PARA ORNEDAMIENTO DE ARREGLO***/
+// Intercambia direcciones de memoria dentro del array
 void swap(struct Process* a, struct Process* b) {
     struct Process temp = *a;
     *a = *b;
     *b = temp;
 }
-
+// Divide una particion del array sobre un pivote y mueve a sus mayores de un lado y menores al otro
 int partition(struct Process arr[], int low, int high) {
     int pivot = arr[high].arrivalTime;
     int i = (low - 1);
@@ -34,7 +33,7 @@ int partition(struct Process arr[], int low, int high) {
     swap(&arr[i + 1], &arr[high]);
     return (i + 1);
 }
-
+// Utiliza recursividad para ordenar el arreglo de procesos (para asegurarnos que esten en orde de llegada)
 void quicksort(struct Process arr[], int low, int high) {
     if (low < high) {
         int pi = partition(arr, low, high);
@@ -184,6 +183,12 @@ int main()
 
     //Ordenamiento del arreglo según su tiempo de llegada
     quicksort(pro,0, n-1);
+
+    printf("\nOrdered by Arrival:\n");
+    for(i = 0; i < n; i++){
+        printf("%d: Process %d\n",i,pro[i].id);
+    }
+
 
     //Se realiza el scheduling
     roundRobin(pro, n, quantum);
