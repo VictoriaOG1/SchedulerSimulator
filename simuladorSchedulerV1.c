@@ -14,6 +14,7 @@ struct Process
     int indexService;
 };
 
+/*** FUNCIONES PARA ORNEDAMIENTO DE ARREGLO***/
 void swap(struct Process* a, struct Process* b) {
     struct Process temp = *a;
     *a = *b;
@@ -179,6 +180,10 @@ int main()
     printf("Ingrese el quantum para el algoritmo de Round Robin: ");
     scanf("%d", &quantum);
 
+    //Ordenamiento del arreglo según su tiempo de llegada
+    quicksort(pro,0, n-1);
+
+    //Se realiza el scheduling
     roundRobin(pro, n, quantum);
 
     return 0;
