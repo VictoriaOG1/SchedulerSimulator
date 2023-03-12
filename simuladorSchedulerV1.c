@@ -157,11 +157,12 @@ int main()
 {
     //Variables
     int i, n, quantum;
-    struct Process pro[n];
 
     //Ingreso de datos: número de procesos, el burst time. el arrival time de cada proceso y el quantum
     printf("Ingrese el número de Proceso: ");
     scanf("%d", &n);
+
+    struct Process pro[n];
 
     for (i = 0; i < n; i++)
     {
