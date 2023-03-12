@@ -55,6 +55,7 @@ void contextChange(int index, int processingTime,struct Process pro[], int mem[]
     for (int r = 0; r < 3; r++)
     { // Se carga informacion del proceso en memoria
         memcpy(&reg[r], &mem[r + ((pro[index].id - 1) * 3)], sizeof(int));
+        // printf("\nreg[%d]: %d copied over mem[%d]: %d",r,reg[r],r + ((pro[index].id - 1) * 3), mem[r + ((pro[index].id - 1) * 3)]);
     }
     for (int t = 0; t < processingTime; t++)
     { // Se realiza una operacion con esos datos
@@ -64,6 +65,7 @@ void contextChange(int index, int processingTime,struct Process pro[], int mem[]
     for (int r = 0; r < 3; r++)
     { // Se guarda el estado de la informacion en memoria
         memcpy(&mem[r + ((pro[index].id - 1) * 3)], &reg[r], sizeof(int));
+        // printf("\nmem[%d]: %d copied over reg[%d]: %d",r + ((pro[index].id - 1) * 3), mem[r + ((pro[index].id - 1) * 3)],r,reg[r]);
     }
 }
 //Funcion para simular un scheduler con algoritmo Round Robin 
@@ -199,6 +201,8 @@ int main()
     struct Process pro[n];
     int memory[3 * n];
 
+    for(int i = 0; i<(3*n);i++){memory[i] = 1;} //Inicializa el espacio de memoria
+
     for (i = 0; i < n; i++)
     {
         printf("Ingrese el tiempo de llegada para el proceso %d: ", i + 1);
@@ -210,7 +214,7 @@ int main()
         pro[i].id = i + 1;
         pro[i].state = 0; // procesos no iniciados
         pro[i].responseTime = -1;
-        memory[i],memory[i+1],memory[i+2] = 1;
+        // memory[i],memory[i+1],memory[i+2] = 1;
     }
 
     printf("Ingrese el quantum para el algoritmo de round robin: ");
