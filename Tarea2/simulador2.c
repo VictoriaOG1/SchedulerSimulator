@@ -12,6 +12,7 @@ struct Process
     int exitTime;
     int serviceTime;
 };
+
 // Intercambia las direcciones de memoria dentro del array
 void swap(struct Process *a, struct Process *b)
 {
@@ -162,50 +163,77 @@ void roundRobin(struct Process pro[], int n, int quantum)
 }
 
 
-void FIFO(struct Process pro[], int n) {
+void FIFO(struct Process pro[], int n) 
+{
     int time = 0;
     int i;
-    int totalWaitTime = 0, totalResponseTime = 0, totalServiceTime = 0;
+    int remainingTime[n];
+    int flag=0, totalWaitTime = 0, totalResponseTime = 0, totalServiceTime = 0;
 
-    // Ejecuta el FIFO hasta que todos los procesos hayan terminado.
-    for (i = 0; i < n; i++) 
+    // Inicializa el tiempo restante del proceso como su tiempo de ejecucion.
+    for (i = 0; i < n; i++)
     {
-        // Si el tiempo actual es menor que el tiempo de llegada del proceso,
-        // espera hasta que llegue el proceso.
-        if (time < pro[i].arrivalTime) 
+        remainingTime[i] = pro[i].burstTime;
+    }
+
+    while(1)
+    {
+        flag = 0;
+
+        // Ejecuta el FIFO hasta que todos los procesos hayan terminado.
+        for (i = 0; i < n; i++) 
         {
-            time = pro[i].arrivalTime;
+
+            // Si el proceso ya se completo, salta a la siguiente iteracion.
+            if (remainingTime[i] == 0)
+            {
+                continue;
+            }
+
+            // Si el tiempo actual es menor que el tiempo de llegada del proceso,
+            // espera hasta que llegue el proceso.
+            if (time < pro[i].arrivalTime) 
+            {
+                time = pro[i].arrivalTime;
+            }
+
+            // Marca que el proceso ya ha comenzado.
+            pro[i].state = 1;
+
+            // Registra el tiempo de respuesta del proceso.
+            pro[i].responseTime = time - pro[i].arrivalTime;
+
+            // Ejecuta el proceso durante su tiempo de burst.
+            printf("Proceso %d: Tiempo %d - %d\n", pro[i].id, time, time + pro[i].burstTime);
+            time += pro[i].burstTime;
+
+            // Registra el tiempo de finalizacion del proceso.
+            pro[i].exitTime = time;
+
+            // Calcula el tiempo de servicio del proceso
+            pro[i].serviceTime = pro[i].exitTime - pro[i].arrivalTime;
+            
+            // Calcula el tiempo de espera del proceso.
+            pro[i].waitingTime = pro[i].serviceTime - pro[i].burstTime;
+
+            // Calcula los tiempos de espera y de respuesta promedio de todos los procesos.
+            totalWaitTime += pro[i].waitingTime;
+            totalResponseTime += pro[i].responseTime;
+            totalServiceTime += pro[i].serviceTime;
         }
 
-        // Marca que el proceso ya ha comenzado.
-        pro[i].state = 1;
-
-        // Registra el tiempo de respuesta del proceso.
-        pro[i].responseTime = time - pro[i].arrivalTime;
-
-        // Ejecuta el proceso durante su tiempo de burst.
-        printf("Proceso %d: Tiempo %d - %d\n", pro[i].id, time, time + pro[i].burstTime);
-        time += pro[i].burstTime;
-
-        // Registra el tiempo de finalizacion del proceso.
-        pro[i].exitTime = time;
-
-        // Calcula el tiempo de servicio del proceso
-        pro[i].serviceTime = pro[i].exitTime - pro[i].arrivalTime;
-        
-        // Calcula el tiempo de espera del proceso.
-        pro[i].waitingTime = pro[i].serviceTime - pro[i].burstTime;
-
-        // Calcula los tiempos de espera y de respuesta promedio de todos los procesos.
-        totalWaitTime += pro[i].waitingTime;
-        totalResponseTime += pro[i].responseTime;
-        totalServiceTime += pro[i].serviceTime;
+        // Si ningun proceso se proceso en esta iteracion,
+        // significa que todos los procesos se han completado.
+        if (flag == 0)
+        {
+            break;
+        }
     }
 
     // Imprime los tiempos promedio de espera, respuesta y servicio de todos los procesos.
     printf("Tiempo promedio de espera = %.2f\n", (float)totalWaitTime/n);
     printf("Tiempo promedio de respuesta = %.2f\n", (float)totalResponseTime/n);
-    printf("Tiempo promedio de servicio = %.2f\n", (float)totalServiceTime/n);
+    
 }
 
 int main()
