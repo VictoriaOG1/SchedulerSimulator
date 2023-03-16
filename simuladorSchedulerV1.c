@@ -13,18 +13,22 @@ struct Process
     int serviceTime;
 };
 // Intercambia las direcciones de memoria dentro del array
-void swap(struct Process* a, struct Process* b) {
+void swap(struct Process *a, struct Process *b)
+{
     struct Process temp = *a;
     *a = *b;
     *b = temp;
 }
 // Divide una particion del array sobre un pivote y mueve los mayores a este a un lado y menores al otro
-int partition(struct Process arr[], int low, int high) {
+int partition(struct Process arr[], int low, int high)
+{
     int pivot = arr[high].arrivalTime;
     int i = (low - 1);
- 
-    for (int j = low; j <= high - 1; j++) {
-        if (arr[j].arrivalTime < pivot) {
+
+    for (int j = low; j <= high - 1; j++)
+    {
+        if (arr[j].arrivalTime < pivot)
+        {
             i++;
             swap(&arr[i], &arr[j]);
         }
@@ -33,16 +37,18 @@ int partition(struct Process arr[], int low, int high) {
     return (i + 1);
 }
 // Utiliza recursividad para ordenar el arreglo de procesos (para asegurarnos que esten en order de llegada)
-void quicksort(struct Process arr[], int low, int high) {
-    if (low < high) {
+void quicksort(struct Process arr[], int low, int high)
+{
+    if (low < high)
+    {
         int pi = partition(arr, low, high);
- 
+
         quicksort(arr, low, pi - 1);
         quicksort(arr, pi + 1, high);
     }
 }
 
-//Funcion para simular un scheduler con algoritmo Round Robin 
+// Funcion para simular un scheduler con algoritmo Round Robin
 void roundRobin(struct Process pro[], int n, int quantum)
 {
     int time = 0;
@@ -59,7 +65,7 @@ void roundRobin(struct Process pro[], int n, int quantum)
     // Ejecuta el Round Robin hasta que todos los procesos hayan terminado.
     while (1)
     {
-        flag = 0; //indica que no hay procesos que ejecutar
+        flag = 0; // indica que no hay procesos que ejecutar
 
         // Procesa todos los procesos uno por uno.
         for (i = 0; i < n; i++)
@@ -97,11 +103,10 @@ void roundRobin(struct Process pro[], int n, int quantum)
 
                     // Registra el tiempo de finalizacion del proceso.
                     pro[i].exitTime = time;
-                    //Calcula el tiempo de servicio del proceso 
+                    // Calcula el tiempo de servicio del proceso
                     pro[i].serviceTime = pro[i].exitTime - pro[i].arrivalTime;
                     // Calcula el tiempo de espera del proceso.
                     pro[i].waitingTime = pro[i].serviceTime - pro[i].burstTime;
-                    
 
                     // Calcula los tiempos de espera y de respuesta promedio de todos los procesos.
                     totalWaitTime += pro[i].waitingTime;
@@ -113,7 +118,7 @@ void roundRobin(struct Process pro[], int n, int quantum)
                 // el proceso todavia no se ha completado, asi que se ejecuta durante el quantum.
                 else
                 {
-                    printf("Proceso %d: Tiempo %d - %d\n", pro[i].id, time, time + quantum); 
+                    printf("Proceso %d: Tiempo %d - %d\n", pro[i].id, time, time + quantum);
                     time += quantum;
                     remainingTime[i] -= quantum;
                 }
@@ -142,14 +147,14 @@ void roundRobin(struct Process pro[], int n, int quantum)
     // Calcula el tiempo de espera promedio.
     float avgWaitTime = (float)totalWaitTime / (float)n;
 
-    //Calcula el índice de servicio
+    // Calcula el índice de servicio
     float serviceIndex = (float)totalResponseTime / (float)time;
 
     // Imprime los resultados.
     printf("\nProceso\t Tiempo de Llegada\t Tiempo de Ejecución\t Tiempo de Respuesta\t Tiempo Final\t Tiempo de servicio\t Tiempo de Espera\t \n");
     for (i = 0; i < n; i++)
     {
-        printf("%d\t\t %d\t\t\t %d\t\t\t %d\t\t\t %d\t\t %d\t\t\t %d\n", pro[i].id, pro[i].arrivalTime, pro[i].burstTime, pro[i].responseTime,pro[i].exitTime ,pro[i].serviceTime, pro[i].waitingTime);
+        printf("%d\t\t %d\t\t\t %d\t\t\t %d\t\t\t %d\t\t %d\t\t\t %d\n", pro[i].id, pro[i].arrivalTime, pro[i].burstTime, pro[i].responseTime, pro[i].exitTime, pro[i].serviceTime, pro[i].waitingTime);
     }
     printf("\nTiempo de Respuesta Promedio = %.2f", avgResponseTime);
     printf("\nTiempo de Espera Promedio = %.2f", avgWaitTime);
@@ -160,7 +165,7 @@ int main()
 {
     int i, n, quantum;
 
-    //Ingreso de datos: numero de procesos, el burst time. el arrival time de cada proceso y el quantum
+    // Ingreso de datos: numero de procesos, el burst time. el arrival time de cada proceso y el quantum
     printf("Ingrese el número de proceso: ");
     scanf("%d", &n);
 
@@ -175,18 +180,18 @@ int main()
         scanf("%d", &pro[i].burstTime);
 
         pro[i].id = i + 1;
-        pro[i].state = 0; //Procesos no inicializados 
+        pro[i].state = 0; // Procesos no inicializados
         pro[i].responseTime = -1;
     }
 
     printf("Ingrese el quantum para el algoritmo de round robin: ");
     scanf("%d", &quantum);
 
-    //Ordenamiento del arreglo segun su tiempo de llegada
-    quicksort(pro,0, n-1);
+    // Ordenamiento del arreglo segun su tiempo de llegada
+    quicksort(pro, 0, n - 1);
 
     printf("\nRound Robin Scheduler: \n");
-    //Se realiza el scheduling
+    // Se realiza el scheduling
     roundRobin(pro, n, quantum);
 
     return 0;
