@@ -11,6 +11,7 @@ struct Process
     int waitingTime;
     int exitTime;
     int serviceTime;
+    int remainingTime;
 };
 
 // Intercambia las direcciones de memoria dentro del array
@@ -54,14 +55,7 @@ void roundRobin(struct Process pro[], int n, int quantum)
 {
     int time = 0;
     int i;
-    int remainingTime[n];
     int flag, totalWaitTime = 0, totalResponseTime = 0, totalServiceTime;
-
-    // Inicializa el tiempo restante del proceso como su tiempo de ejecucion.
-    for (i = 0; i < n; i++)
-    {
-        remainingTime[i] = pro[i].burstTime;
-    }
 
     // Ejecuta el Round Robin hasta que todos los procesos hayan terminado.
     while (1)
@@ -72,7 +66,7 @@ void roundRobin(struct Process pro[], int n, int quantum)
         for (i = 0; i < n; i++)
         {
             // Si el proceso ya se completo, salta a la siguiente iteracion.
-            if (remainingTime[i] == 0)
+            if (pro[i].remainingTime == 0)
             {
                 continue;
             }
@@ -96,11 +90,11 @@ void roundRobin(struct Process pro[], int n, int quantum)
 
                 // Si el tiempo restante es menor o igual al quantum,
                 // el proceso se completara en esta iteracion, asi que actualiza el tiempo restante.
-                if (remainingTime[i] <= quantum)
+                if (pro[i].remainingTime <= quantum)
                 {
-                    printf("Proceso %d: Tiempo %d - %d\n", pro[i].id, time, time + remainingTime[i]);
-                    time += remainingTime[i];
-                    remainingTime[i] = 0;
+                    printf("Proceso %d: Tiempo %d - %d\n", pro[i].id, time, time + pro[i].remainingTime);
+                    time += pro[i].remainingTime;
+                    pro[i].remainingTime = 0;
 
                     // Registra el tiempo de finalizacion del proceso.
                     pro[i].exitTime = time;
@@ -121,7 +115,7 @@ void roundRobin(struct Process pro[], int n, int quantum)
                 {
                     printf("Proceso %d: Tiempo %d - %d\n", pro[i].id, time, time + quantum);
                     time += quantum;
-                    remainingTime[i] -= quantum;
+                    pro[i].remainingTime -= quantum;
                 }
             }
 
@@ -163,18 +157,12 @@ void roundRobin(struct Process pro[], int n, int quantum)
 }
 
 
-void FIFO(struct Process pro[], int n) 
+void FCFS(struct Process pro[], int n) 
 {
     int time = 0;
     int i;
-    int remainingTime[n];
     int flag=0, totalWaitTime = 0, totalResponseTime = 0, totalServiceTime = 0;
 
-    // Inicializa el tiempo restante del proceso como su tiempo de ejecucion.
-    for (i = 0; i < n; i++)
-    {
-        remainingTime[i] = pro[i].burstTime;
-    }
 
     while(1)
     {
@@ -185,7 +173,7 @@ void FIFO(struct Process pro[], int n)
         {
 
             // Si el proceso ya se completo, salta a la siguiente iteracion.
-            if (remainingTime[i] == 0)
+            if (pro[i].remainingTime == 0)
             {
                 continue;
             }
@@ -204,7 +192,6 @@ void FIFO(struct Process pro[], int n)
             pro[i].responseTime = time - pro[i].arrivalTime;
 
             // Ejecuta el proceso durante su tiempo de burst.
-            printf("Proceso %d: Tiempo %d - %d\n", pro[i].id, time, time + pro[i].burstTime);
             time += pro[i].burstTime;
 
             // Registra el tiempo de finalizacion del proceso.
@@ -230,9 +217,24 @@ void FIFO(struct Process pro[], int n)
         }
     }
 
-    // Imprime los tiempos promedio de espera, respuesta y servicio de todos los procesos.
-    printf("Tiempo promedio de espera = %.2f\n", (float)totalWaitTime/n);
-    printf("Tiempo promedio de respuesta = %.2f\n", (float)totalResponseTime/n);
+    // Calcula el tiempo de respuesta promedio.
+    float avgResponseTime = (float)totalResponseTime / (float)n;
+
+    // Calcula el tiempo de espera promedio.
+    float avgWaitTime = (float)totalWaitTime / (float)n;
+
+    // Calcula el índice de servicio
+    float serviceIndex = (float)totalResponseTime / (float)time;
+
+    // Imprime los resultados.
+    printf("\nProceso\t Tiempo de Llegada\t Tiempo de Ejecución\t Tiempo de Respuesta\t Tiempo Final\t Tiempo de servicio\t Tiempo de Espera\t \n");
+    for (i = 0; i < n; i++)
+    {
+        printf("%d\t\t %d\t\t\t %d\t\t\t %d\t\t\t %d\t\t %d\t\t\t %d\n", pro[i].id, pro[i].arrivalTime, pro[i].burstTime, pro[i].responseTime, pro[i].exitTime, pro[i].serviceTime, pro[i].waitingTime);
+    }
+    printf("\nTiempo de Respuesta Promedio = %.2f", avgResponseTime);
+    printf("\nTiempo de Espera Promedio = %.2f", avgWaitTime);
+    printf("\nÍndice de servicio = %.2f \n", serviceIndex);
     
 }
 
@@ -257,6 +259,9 @@ int main()
         pro[i].id = i + 1;
         pro[i].state = 0; // Procesos no inicializados
         pro[i].responseTime = -1;
+        // Inicializa el tiempo restante del proceso como su tiempo de ejecucion.
+        pro[i].remainingTime = pro[i].burstTime;
+    
     }
 
     printf("Ingrese el quantum para el algoritmo de round robin: ");
@@ -265,9 +270,16 @@ int main()
     // Ordenamiento del arreglo segun su tiempo de llegada
     quicksort(pro, 0, n - 1);
 
+    //Scheduling con Round Robin
     printf("\nRound Robin Scheduler: \n");
-    // Se realiza el scheduling
     roundRobin(pro, n, quantum);
+
+    //Scheduling con FIFO 
+    printf("\nFirst Come First Served Scheduler: \n");
+    FCFS(pro,n);
+
+    //Scheduling con SJF
+    printf("\nShortest Job First Scheduler: \n");
 
     return 0;
 }
