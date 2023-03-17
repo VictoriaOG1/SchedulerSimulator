@@ -21,32 +21,51 @@ void swap(struct Process *a, struct Process *b)
     *a = *b;
     *b = temp;
 }
+
 // Divide una particion del array sobre un pivote y mueve los mayores a este a un lado y menores al otro
-int partition(struct Process arr[], int low, int high)
+int partition(struct Process arr[], int low, int high, int type)
 {
-    int pivot = arr[high].arrivalTime;
     int i = (low - 1);
 
-    for (int j = low; j <= high - 1; j++)
+    if (type==1)
     {
-        if (arr[j].arrivalTime < pivot)
+        int pivot = arr[high].arrivalTime;
+        
+        for (int j = low; j <= high - 1; j++)
         {
-            i++;
-            swap(&arr[i], &arr[j]);
+            if (arr[j].arrivalTime < pivot)
+            {
+                i++;
+                swap(&arr[i], &arr[j]);
+            }
         }
     }
+    else
+    {
+        int pivot = arr[high].burstTime;
+
+        for (int j = low; j <= high - 1; j++)
+        {
+            if (arr[j].burstTime < pivot)
+            {
+                i++;
+                swap(&arr[i], &arr[j]);
+            }
+        }
+    }
+
     swap(&arr[i + 1], &arr[high]);
     return (i + 1);
 }
 // Utiliza recursividad para ordenar el arreglo de procesos (para asegurarnos que esten en order de llegada)
-void quicksort(struct Process arr[], int low, int high)
+void quicksort(struct Process arr[], int low, int high, int type)
 {
     if (low < high)
     {
-        int pi = partition(arr, low, high);
+        int pi = partition(arr, low, high, type);
 
-        quicksort(arr, low, pi - 1);
-        quicksort(arr, pi + 1, high);
+        quicksort(arr, low, pi - 1, type);
+        quicksort(arr, pi + 1, high, type);
     }
 }
 
@@ -194,6 +213,93 @@ void FCFS(struct Process pro[], int n)
             // Ejecuta el proceso durante su tiempo de burst.
             time += pro[i].burstTime;
 
+            //Se completa el proceso y el remainingTime se convierte en 0
+            pro[i].remainingTime = 0;
+
+            // Registra el tiempo de finalizacion del proceso.
+            pro[i].exitTime = time;
+
+            // Calcula el tiempo de servicio del proceso
+            pro[i].serviceTime = pro[i].exitTime - pro[i].arrivalTime;
+            
+            // Calcula el tiempo de espera del proceso.
+            pro[i].waitingTime = pro[i].serviceTime - pro[i].burstTime;
+
+            // Calcula los tiempos de espera y de respuesta promedio de todos los procesos.
+            totalWaitTime += pro[i].waitingTime;
+            totalResponseTime += pro[i].responseTime;
+            totalServiceTime += pro[i].serviceTime;
+        }
+
+        // Si ningun proceso se proceso en esta iteracion,
+        // significa que todos los procesos se han completado.
+        if (flag == 0)
+        {
+            break;
+        }
+    }
+
+    // Calcula el tiempo de respuesta promedio.
+    float avgResponseTime = (float)totalResponseTime / (float)n;
+
+    // Calcula el tiempo de espera promedio.
+    float avgWaitTime = (float)totalWaitTime / (float)n;
+
+    // Calcula el índice de servicio
+    float serviceIndex = (float)totalResponseTime / (float)time;
+
+    // Imprime los resultados.
+    printf("\nProceso\t Tiempo de Llegada\t Tiempo de Ejecución\t Tiempo de Respuesta\t Tiempo Final\t Tiempo de servicio\t Tiempo de Espera\t \n");
+    for (i = 0; i < n; i++)
+    {
+        printf("%d\t\t %d\t\t\t %d\t\t\t %d\t\t\t %d\t\t %d\t\t\t %d\n", pro[i].id, pro[i].arrivalTime, pro[i].burstTime, pro[i].responseTime, pro[i].exitTime, pro[i].serviceTime, pro[i].waitingTime);
+    }
+    printf("\nTiempo de Respuesta Promedio = %.2f", avgResponseTime);
+    printf("\nTiempo de Espera Promedio = %.2f", avgWaitTime);
+    printf("\nÍndice de servicio = %.2f \n", serviceIndex);
+    
+}
+
+void SJF(struct Process pro[], int n) 
+{
+    int time = 0;
+    int i;
+    int flag=0, totalWaitTime = 0, totalResponseTime = 0, totalServiceTime = 0;
+
+
+    while(1)
+    {
+        flag = 0;
+
+        // Ejecuta el SJF hasta que todos los procesos hayan terminado.
+        for (i = 0; i < n; i++) 
+        {
+
+            // Si el proceso ya se completo, salta a la siguiente iteracion.
+            if (pro[i].remainingTime == 0)
+            {
+                continue;
+            }
+
+            // Si el tiempo actual es menor que el tiempo de llegada del proceso,
+            // espera hasta que llegue el proceso.
+            if (time < pro[i].arrivalTime) 
+            {
+                time = pro[i].arrivalTime;
+            }
+
+            // Marca que el proceso ya ha comenzado.
+            pro[i].state = 1;
+
+            // Registra el tiempo de respuesta del proceso.
+            pro[i].responseTime = time - pro[i].arrivalTime;
+
+            // Ejecuta el proceso durante su tiempo de burst.
+            time += pro[i].burstTime;
+
+            //Se completa el proceso y el remainingTime se convierte en 0
+            pro[i].remainingTime = 0;
+            
             // Registra el tiempo de finalizacion del proceso.
             pro[i].exitTime = time;
 
@@ -268,7 +374,7 @@ int main()
     scanf("%d", &quantum);
 
     // Ordenamiento del arreglo segun su tiempo de llegada
-    quicksort(pro, 0, n - 1);
+    quicksort(pro, 0, n - 1, 0);
 
     //Scheduling con Round Robin
     printf("\nRound Robin Scheduler: \n");
@@ -279,7 +385,9 @@ int main()
     FCFS(pro,n);
 
     //Scheduling con SJF
+    quicksort(pro, 0, n - 1, 1);
     printf("\nShortest Job First Scheduler: \n");
+    SJF(pro, n);
 
     return 0;
 }
