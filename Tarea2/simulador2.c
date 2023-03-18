@@ -49,7 +49,7 @@ void createProcess(struct Process pro[], int n, int type)
 
         if (i <= n1) //Procesos CPU bound (mas interrupiones de poco tiempo)
         {
-            int n_itrp = rand() % 4; //Número de interrupciones aleatorio entre 8 y 4
+            int n_itrp = rand() % 4; //Número de interrupciones aleatorio entre 4
             int itrp[n_itrp]; //Arreglo de interrupciones
 
             //Se asigna un valor aleatorio de tiempo a cada interrupcion
@@ -254,9 +254,11 @@ void FCFS(struct Process pro[], int n)
     {
         flag = 0;
 
-        // Ejecuta el FIFO hasta que todos los procesos hayan terminado.
+        // Ejecuta el SJF hasta que todos los procesos hayan terminado.
         for (i = 0; i < n; i++) 
         {
+            //Ordenar arreglo por el arrival time
+            quicksort(pro, 0, n - 1, 1);
 
             // Si el proceso ya se completo, salta a la siguiente iteracion.
             if (pro[i].remainingTime == 0)
@@ -264,38 +266,43 @@ void FCFS(struct Process pro[], int n)
                 continue;
             }
 
+            flag=1;
+
             // Si el tiempo actual es menor que el tiempo de llegada del proceso,
             // espera hasta que llegue el proceso.
-            if (time < pro[i].arrivalTime) 
+            if (pro[i].arrivalTime <= time)  
             {
-                time = pro[i].arrivalTime;
+                // Marca que el proceso ya ha comenzado.
+                pro[i].state = 1;
+
+                // Registra el tiempo de respuesta del proceso.
+                pro[i].responseTime = time - pro[i].arrivalTime;
+
+                // Ejecuta el proceso durante su tiempo de burst.
+                time += pro[i].burstTime;
+
+                //Se completa el proceso y el remainingTime se convierte en 0
+                pro[i].remainingTime = 0;
+
+                // Registra el tiempo de finalizacion del proceso.
+                pro[i].exitTime = time;
+
+                // Calcula el tiempo de servicio del proceso
+                pro[i].serviceTime = pro[i].exitTime - pro[i].arrivalTime;
+                
+                // Calcula el tiempo de espera del proceso.
+                pro[i].waitingTime = pro[i].serviceTime - pro[i].burstTime;
+
+                // Calcula los tiempos de espera y de respuesta promedio de todos los procesos.
+                totalWaitTime += pro[i].waitingTime;
+                totalResponseTime += pro[i].responseTime;
+                totalServiceTime += pro[i].serviceTime;
             }
-
-            // Marca que el proceso ya ha comenzado.
-            pro[i].state = 1;
-
-            // Registra el tiempo de respuesta del proceso.
-            pro[i].responseTime = time - pro[i].arrivalTime;
-
-            // Ejecuta el proceso durante su tiempo de burst.
-            time += pro[i].burstTime;
-
-            //Se completa el proceso y el remainingTime se convierte en 0
-            pro[i].remainingTime = 0;
-
-            // Registra el tiempo de finalizacion del proceso.
-            pro[i].exitTime = time;
-
-            // Calcula el tiempo de servicio del proceso
-            pro[i].serviceTime = pro[i].exitTime - pro[i].arrivalTime;
-            
-            // Calcula el tiempo de espera del proceso.
-            pro[i].waitingTime = pro[i].serviceTime - pro[i].burstTime;
-
-            // Calcula los tiempos de espera y de respuesta promedio de todos los procesos.
-            totalWaitTime += pro[i].waitingTime;
-            totalResponseTime += pro[i].responseTime;
-            totalServiceTime += pro[i].serviceTime;
+            else
+            {
+                time++;
+                i--;
+            }
         }
 
         // Si ningun proceso se proceso en esta iteracion,
@@ -341,6 +348,8 @@ void SJF(struct Process pro[], int n)
         // Ejecuta el SJF hasta que todos los procesos hayan terminado.
         for (i = 0; i < n; i++) 
         {
+            //Ordenar arreglo por el burst time
+            quicksort(pro, 0, n - 1, 2);
 
             // Si el proceso ya se completo, salta a la siguiente iteracion.
             if (pro[i].remainingTime == 0)
@@ -348,38 +357,43 @@ void SJF(struct Process pro[], int n)
                 continue;
             }
 
+            flag=1;
+
             // Si el tiempo actual es menor que el tiempo de llegada del proceso,
             // espera hasta que llegue el proceso.
-            if (time < pro[i].arrivalTime) 
+            if (pro[i].arrivalTime <= time)  
             {
-                time = pro[i].arrivalTime;
+                // Marca que el proceso ya ha comenzado.
+                pro[i].state = 1;
+
+                // Registra el tiempo de respuesta del proceso.
+                pro[i].responseTime = time - pro[i].arrivalTime;
+
+                // Ejecuta el proceso durante su tiempo de burst.
+                time += pro[i].burstTime;
+
+                //Se completa el proceso y el remainingTime se convierte en 0
+                pro[i].remainingTime = 0;
+
+                // Registra el tiempo de finalizacion del proceso.
+                pro[i].exitTime = time;
+
+                // Calcula el tiempo de servicio del proceso
+                pro[i].serviceTime = pro[i].exitTime - pro[i].arrivalTime;
+                
+                // Calcula el tiempo de espera del proceso.
+                pro[i].waitingTime = pro[i].serviceTime - pro[i].burstTime;
+
+                // Calcula los tiempos de espera y de respuesta promedio de todos los procesos.
+                totalWaitTime += pro[i].waitingTime;
+                totalResponseTime += pro[i].responseTime;
+                totalServiceTime += pro[i].serviceTime;
             }
-
-            // Marca que el proceso ya ha comenzado.
-            pro[i].state = 1;
-
-            // Registra el tiempo de respuesta del proceso.
-            pro[i].responseTime = time - pro[i].arrivalTime;
-
-            // Ejecuta el proceso durante su tiempo de burst.
-            time += pro[i].burstTime;
-
-            //Se completa el proceso y el remainingTime se convierte en 0
-            pro[i].remainingTime = 0;
-
-            // Registra el tiempo de finalizacion del proceso.
-            pro[i].exitTime = time;
-
-            // Calcula el tiempo de servicio del proceso
-            pro[i].serviceTime = pro[i].exitTime - pro[i].arrivalTime;
-            
-            // Calcula el tiempo de espera del proceso.
-            pro[i].waitingTime = pro[i].serviceTime - pro[i].burstTime;
-
-            // Calcula los tiempos de espera y de respuesta promedio de todos los procesos.
-            totalWaitTime += pro[i].waitingTime;
-            totalResponseTime += pro[i].responseTime;
-            totalServiceTime += pro[i].serviceTime;
+            else
+            {
+                time++;
+                i--;
+            }
         }
 
         // Si ningun proceso se proceso en esta iteracion,
@@ -442,30 +456,27 @@ int main()
     }
 
     */
+
+   //Crear procesos
     createProcess(pro, n, 0);
     
-
     printf("Ingrese el quantum para el algoritmo de round robin: ");
     scanf("%d", &quantum);
 
-    
     // Ordenamiento del arreglo segun su tiempo de llegada
-    quicksort(pro, 0, n - 1, 0);
+    quicksort(pro, 0, n - 1, 1);
 
     //Scheduling con Round Robin
     printf("\nRound Robin Scheduler: \n");
     roundRobin(pro, n, quantum);
-/*
+
     //Scheduling con FIFO 
     printf("\nFirst Come First Served Scheduler: \n");
     FCFS(pro,n);
 
     //Scheduling con SJF
-    quicksort(pro, 0, n - 1, 1);
     printf("\nShortest Job First Scheduler: \n");
     SJF(pro, n);
-    */
-    
 
     return 0;
 }
