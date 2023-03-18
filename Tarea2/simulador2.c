@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <time.h>
 
 // Estructura de nuestro proceso
 struct Process
@@ -12,7 +13,59 @@ struct Process
     int exitTime;
     int serviceTime;
     int remainingTime;
+    int interruptions[];
 };
+
+//Funcion creacion de procesos 
+void createProcess(struct Process pro[], int n, int type)
+{
+    int n1;
+
+    if (type == 1) //90% CPU bound y 10% I/O bound 
+    {
+        n1 = n*0.9;
+    }
+    else if (type == 2) //50% CPU bound y 50% I/O bound 
+    {
+        n1 = n*0.5;
+    }
+    else //10% CPU bound y 90% I/O bound 
+    {
+        n1 = n*0.1;
+    }
+
+    n1-=1;
+
+    for(int i=0; i<n; i++) //Llena la informacion del proceso uno a uno
+    {
+        //Para cada proceso de asigna un burst time aleatorio entre 10 y 50
+        pro[i].burstTime = rand() % 50 + 10;
+
+        if (i <= n1) //Procesos CPU bound (mas interrupiones de poco tiempo)
+        {
+            int n_itrp = rand() % 8 + 4; //Número de interrupciones aleatorio entre 8 y 4
+            int itrp[n_itrp]; //Arreglo de interrupciones
+
+            //Se asigna un valor aleatorio de tiempo a cada interrupcion
+            for(int j=0; j<n_itrp; j++)
+            {
+                itrp[j] = rand() % 3; //Entre 0 y 3
+            }
+        }
+        else //Procesos I/O bound (menos interrupciones de mas tiempo)
+        {
+            int n_itrp = rand() % 4; //Número de interrupciones aleatorio entre 8 y 4
+            int itrp[n_itrp]; //Arreglo de interrupciones
+
+            //Se asigna un valor aleatorio de tiempo a cada interrupcion
+            for(int j=0; j<n_itrp; j++)
+            {
+                itrp[j] = rand() % 8 + 3; //Entre 3 y 8
+            }
+        }
+    }
+
+}
 
 // Intercambia las direcciones de memoria dentro del array
 void swap(struct Process *a, struct Process *b)
@@ -299,7 +352,7 @@ void SJF(struct Process pro[], int n)
 
             //Se completa el proceso y el remainingTime se convierte en 0
             pro[i].remainingTime = 0;
-            
+
             // Registra el tiempo de finalizacion del proceso.
             pro[i].exitTime = time;
 
@@ -346,6 +399,7 @@ void SJF(struct Process pro[], int n)
 
 int main()
 {
+
     int i, n, quantum;
 
     // Ingreso de datos: numero de procesos, el burst time. el arrival time de cada proceso y el quantum
@@ -354,6 +408,8 @@ int main()
 
     struct Process pro[n];
 
+    srand(time(NULL)); //Instrucción que inicializa el generador de números aleatorios
+    
     for (i = 0; i < n; i++)
     {
         printf("Ingrese el tiempo de llegada para el proceso %d: ", i + 1);
@@ -370,6 +426,7 @@ int main()
     
     }
 
+    
     printf("Ingrese el quantum para el algoritmo de round robin: ");
     scanf("%d", &quantum);
 
@@ -388,6 +445,7 @@ int main()
     quicksort(pro, 0, n - 1, 1);
     printf("\nShortest Job First Scheduler: \n");
     SJF(pro, n);
+
 
     return 0;
 }
