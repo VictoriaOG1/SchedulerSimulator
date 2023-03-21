@@ -13,63 +13,124 @@ struct Process
     int exitTime;
     int serviceTime;
     int remainingTime;
-    int interruptLength[];
+    struct Interupts *interrupts;
+};
+
+// Estructura para las interrupciones
+struct Interupts
+{
+    int id;
+    int duration;
+    int when; //en que segundo del proceso va a ocurrir la interrupcion
 };
 
 //Funcion creacion de procesos 
-void createProcess(struct Process pro[], int n, int type)
+void createProcess(struct Process pro[], int n, int condition)
 {
-    int n1;
+    int n1 = 0;
 
-    if (type == 1) //90% CPU bound y 10% I/O bound 
-    {
-        n1 = n*0.9;
-    }
-    else if (type == 2) //50% CPU bound y 50% I/O bound 
+    if (condition == 1) //50% CPU bound y 50% I/O bound (literal a)
     {
         n1 = n*0.5;
     }
-    else //10% CPU bound y 90% I/O bound 
+    else if (condition == 2) //90% CPU bound y 10% I/O bound (literal b)
+    {
+        n1 = n*0.9;
+    }
+    else if (condition == 3) //10% CPU bound y 90% I/O bound (literal c)
     {
         n1 = n*0.1;
+    }
+    else{
+        printf("Warning no se asigno la razon de bounds");
     }
 
     n1-=1;
 
-    for(int i=0; i<n; i++) //Llena la informacion del proceso uno a uno
+    for(int i=0; i<n; i++) //Llena la informacion de cada proceso (uno a uno)
     {
         //Asignar el id
         pro[i].id = i+1;
-        //Asignar un tiempo aleatorio del arrivalTime
-        pro[i].arrivalTime = rand() % 10 +1;
+        //Asignar un tiempo aleatorio del arrivalTime entre 1 y 10
+        pro[i].arrivalTime = rand() % 10 + 1;
         //Para cada proceso de asigna un burst time aleatorio entre 10 y 50
-        pro[i].burstTime = rand() % 10 + 10;
-        //Asignar -1 al response time
+        pro[i].burstTime = rand() % 50 + 10;
+        //se asigno -1 al response time para saber si hay algun un error
         pro[i].responseTime = -1;
 
-        if (i <= n1) //Procesos CPU bound (mas interrupiones de poco tiempo)
+        if (i > 0 && i <= n1) //Procesos CPU bound (pocas interrupiones de poco tiempo)
         {
-            int n_itrp = rand() % 4; //Número de interrupciones aleatorio entre 4
-            int itrp[n_itrp]; //Arreglo de interrupciones
+            int n_itrp = rand() % 4 + 1; //Número de interrupciones aleatorio entre 1 y 4
+            struct Interupts itrp[n_itrp]; //Arreglo de interrupciones
+            int whenTimes[n_itrp]; //Areglo de tiempos de interrupcion que ya estan
 
-            //Se asigna un valor aleatorio de tiempo a cada interrupcion
-            for(int j=0; j<n_itrp; j++)
-            {
-                itrp[j] = rand() % 8 + 3; //Entre 3 y 8
+            //Se asigna un valor aleatorio de tiempo a cada interrupcion y su id
+            for(int j=0; j<n_itrp; j++){
+                itrp[j].id = j+1;
+                itrp[j].duration = rand() % 3 + 1; //Entre 1 y 3
             }
-            pro[i].interruptLength[n_itrp] = itrp; 
+
+            //Se asigna aleatoreamente cuando va a ocurrir las interrupciones
+            for(int j=0; j<n_itrp; j++){
+                int whenItrp = rand() % pro[i].burstTime + 1; //Entre 1 y brustTime del proceso
+                int whenExists = 0;
+                for (int k = 0; k < j; k++){
+                    if(whenTimes[k] == whenItrp){
+                        whenExists = 1;
+                        break;
+                    }
+                }
+
+                if (!whenExists){
+                    whenTimes[j] = whenItrp;
+                    itrp[j].when = whenItrp;
+                }
+                else{
+                    i--;
+                }
+            }
+
+            pro[i].interrupts = malloc(n_itrp * sizeof(struct Interupts)); 
+            pro[i].interrupts = itrp;
+
         }
-        else //Procesos I/O bound (menos interrupciones de mas tiempo)
+        else if(i > n1) //Procesos I/O bound (muchas interrupciones de mas tiempo)
         {
-            int n_itrp = rand() % 8 + 4; //Número de interrupciones aleatorio entre 8 y 4
-            int itrp[n_itrp]; //Arreglo de interrupciones
+            int n_itrp = rand() % 8 + 4; //Número de interrupciones aleatorio entre 4 y 8
+            struct Interupts itrp[n_itrp]; //Arreglo de interrupciones
+            int whenTimes[n_itrp]; //Areglo de tiempos de interrupcion que ya estan
 
-            //Se asigna un valor aleatorio de tiempo a cada interrupcion
-            for(int j=0; j<n_itrp; j++)
-            {
-                itrp[j] = rand() % 3; //Entre 0 y 3
+            //Se asigna un valor aleatorio de tiempo a cada interrupcion y su id
+            for(int j=0; j<n_itrp; j++){
+                itrp[j].id = j+1;
+                itrp[j].duration = rand() % 6 + 3; //Entre 3 y 6
             }
-            pro[i].interruptLength[n_itrp] = itrp; 
+
+            //Se asigna aleatoreamente cuando va a ocurrir las interrupciones
+            for(int j=0; j<n_itrp; j++){
+                int whenItrp = rand() % pro[i].burstTime + 1; //Entre 1 y brustTime del proceso
+                int whenExists = 0;
+                for (int k = 0; k < j; k++){
+                    if(whenTimes[k] == whenItrp){
+                        whenExists = 1;
+                        break;
+                    }
+                }
+
+                if (!whenExists){
+                    whenTimes[j] = whenItrp;
+                    itrp[j].when = whenItrp;
+                }
+                else{
+                    i--;
+                }
+            }
+
+            pro[i].interrupts = malloc(n_itrp * sizeof(struct Interupts)); 
+            pro[i].interrupts = itrp;
+        }
+        else{
+            printf("Error, asignar la razon de bounds");
         }
     }
 }
@@ -443,10 +504,8 @@ int main()
     {
         printf("Ingrese el tiempo de llegada para el proceso %d: ", i + 1);
         scanf("%d", &pro[i].arrivalTime);
-
         printf("Ingrese el tiempo de CPU para el proceso %d: ", i + 1);
         scanf("%d", &pro[i].burstTime);
-
         pro[i].id = i + 1;
         pro[i].state = 0; // Procesos no inicializados
         pro[i].responseTime = -1;
@@ -454,7 +513,6 @@ int main()
         pro[i].remainingTime = pro[i].burstTime;
     
     }
-
     */
 
    //Crear procesos
