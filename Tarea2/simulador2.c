@@ -58,7 +58,7 @@ void createProcess(struct Process pro[], int n, int condition)
         //se asigno -1 al response time para saber si hay algun un error
         pro[i].responseTime = -1;
 
-        if (i > 0 && i <= n1) //Procesos CPU bound (pocas interrupiones de poco tiempo)
+        if (i > 0 && i <= n1) //Procesos CPU bound (pocas interrupiones de mucho tiempo)
         {
             int n_itrp = rand() % 4 + 1; //Número de interrupciones aleatorio entre 1 y 4
             struct Interupts itrp[n_itrp]; //Arreglo de interrupciones
@@ -67,7 +67,7 @@ void createProcess(struct Process pro[], int n, int condition)
             //Se asigna un valor aleatorio de tiempo a cada interrupcion y su id
             for(int j=0; j<n_itrp; j++){
                 itrp[j].id = j+1;
-                itrp[j].duration = rand() % 3 + 1; //Entre 1 y 3
+                itrp[j].duration = rand() % 6 + 3; //Entre 3 y 6
             }
 
             //Se asigna aleatoreamente cuando va a ocurrir las interrupciones
@@ -94,7 +94,7 @@ void createProcess(struct Process pro[], int n, int condition)
             pro[i].interrupts = itrp;
 
         }
-        else if(i > n1) //Procesos I/O bound (muchas interrupciones de mas tiempo)
+        else if(i > n1) //Procesos I/O bound (muchas interrupciones de poco tiempo)
         {
             int n_itrp = rand() % 8 + 4; //Número de interrupciones aleatorio entre 4 y 8
             struct Interupts itrp[n_itrp]; //Arreglo de interrupciones
@@ -103,7 +103,7 @@ void createProcess(struct Process pro[], int n, int condition)
             //Se asigna un valor aleatorio de tiempo a cada interrupcion y su id
             for(int j=0; j<n_itrp; j++){
                 itrp[j].id = j+1;
-                itrp[j].duration = rand() % 6 + 3; //Entre 3 y 6
+                itrp[j].duration = rand() % 3 + 1; //Entre 1 y 3
             }
 
             //Se asigna aleatoreamente cuando va a ocurrir las interrupciones
