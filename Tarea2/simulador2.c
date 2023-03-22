@@ -47,7 +47,7 @@ void createProcess(struct Process pro[], int n, int condition)
         printf("Warning no se asigno la razon de bounds");
     }
 
-    n1-=1;
+    n1 = -1;
 
     for(int i=0; i<n; i++) //Llena la informacion de cada proceso (uno a uno)
     {
