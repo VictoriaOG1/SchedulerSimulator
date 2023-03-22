@@ -1,72 +1,77 @@
 package Tarea2;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class javaPhil {
 
-    public class Philosopher implements Runnable {
+    public class Philosopher{
+        private int _id;
+        private int _waitTime = 0;
+        private boolean _eating = false;
+        private int _mealsLeft = 3;
 
-        // Member variables, methods defined earlier
-     
-         @Override
-         public void run() {
-             try {
-                 while (true) {
-                     
-                     // thinking
-                     doAction(System.nanoTime() + ": Thinking");
-                     synchronized (leftFork) {
-                         doAction(
-                           System.nanoTime() 
-                             + ": Picked up left fork");
-                         synchronized (rightFork) {
-                             // eating
-                             doAction(
-                               System.nanoTime() 
-                                 + ": Picked up right fork - eating"); 
-                             
-                             doAction(
-                               System.nanoTime() 
-                                 + ": Put down right fork");
-                         }
-                         
-                         // Back to thinking
-                         doAction(
-                           System.nanoTime() 
-                             + ": Put down left fork. Back to thinking");
-                     }
-                 }
-             } catch (InterruptedException e) {
-                 Thread.currentThread().interrupt();
-                 return;
-             }
-         }
-     }
-     
+        public boolean FinishedEating(){
+            if(_mealsLeft == 0){return true;}
+            else{return false;}
+        }
+        public boolean isEating(){
+            return _eating;
+        }
+        public int getId(){
+            return _id;
+        }
 
+        Philosopher(int id){_id = id;}
+
+        Callable<String> task = () -> {
+            if(!_eating){
+                if(Observer.requestToEat(getId()) == 0){
+                    _eating = true;
+                    return "Is eating now";
+                }else{
+                    return "It's on queue";
+                }
+            }else{
+                return "It's Eating";
+            }
+        };
+    }
+
+    public static class Observer{
+        static int time = 0;
+        private static Integer[] _init = {-1,-1,-1,-1,-1};
+        static List<Integer> Queue = Arrays.asList(_init);
+        static boolean[] forks = {true,true,true,true,true};
+
+        public static synchronized int requestToEat(int PhilosopherId){
+            if(forks[PhilosopherId] & forks[(PhilosopherId+1)%5]){
+                forks[PhilosopherId] = false;
+                forks[(PhilosopherId+1)%5] = false;
+                return 0;
+            }else{
+                if(true){
+
+                }
+                return 1;
+            }
+        }
+    }
+     
     public static void main(String[] args) throws Exception {
 
-        final Philosopher[] philosophers = new Philosopher[5];
-        Object[] forks = new Object[philosophers.length];
+        ExecutorService exe = Executors.newFixedThreadPool(5);
 
-        for (int i = 0; i < forks.length; i++) {
-            forks[i] = new Object();
-        }
-
-        for (int i = 0; i < philosophers.length; i++) {
-            Object leftFork = forks[i];
-            Object rightFork = forks[(i + 1) % forks.length];
-
-            if (i == philosophers.length - 1) {
-                
-                // The last philosopher picks up the right fork first
-                philosophers[i] = new Philosopher(rightFork, leftFork); 
-            } else {
-                philosophers[i] = new Philosopher(leftFork, rightFork);
-            }
-            
-            Thread t 
-              = new Thread(philosophers[i], "Philosopher " + (i + 1));
-            t.start();
-        }
+        Scanner sc= new Scanner(System.in); //System.in is a standard input stream.
+        System.out.print("Enter a string: ");
+        String str= sc.nextLine(); //reads string.
+        str+= sc.nextLine();
+        str+= sc.nextLine();
+        System.out.println(str);
     }
 }
 
