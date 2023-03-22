@@ -362,7 +362,7 @@ void FCFS(struct Process pro[], int n)
 
                 
                 int flag2=0;
-                for(int j=1; j<=pro[i].burstTime; j++) //Cada segundo del quantum
+                for(int j=1; j<=pro[i].burstTime; j++) 
                 {
                     time++; //Se aumenta un segundo al tiempo total
                     pro[i].remainingTime--; //Se disminuye el remaining time en un segundo 
@@ -408,10 +408,17 @@ void FCFS(struct Process pro[], int n)
             // Si el tiempo de llegada del proceso es mayor que el tiempo actual
             else
             {
-                
-                time++;
-                i--;
-            
+                //Si los procesos anteriores ya iniciaron y el que se encuentra ahora todavía no llega la cola de ready
+                if(i>0 && pro[i-1].state==1 && pro[i].state==0)
+                {
+                    quicksort(pro,0,i-1,2);
+                    i=-1;
+                }
+                else
+                {
+                    time++;
+                    i--;
+                }
             }
         }
         // Si ningún proceso se procesó en esta iteración,
@@ -448,8 +455,134 @@ void FCFS(struct Process pro[], int n)
 
 void SJF(struct Process pro[], int n) 
 {
-    
+    int time = 0;
+    int flag, totalWaitTime = 0, totalResponseTime = 0, totalTurnaroundTime = 0;
+
+    //Ejercutar el round robin hasta que todos los procesos hayan terminado
+    while(1)
+    {
+        flag = 0; //Se mantiene 0 si todos los procesos terminan
+
+        //Transversar por cada proceso
+        for(int i=0; i<n; i++)
+        {
+            // Si el proceso ya se completó, salta a la siguiente iteración.
+            if (pro[i].state == 2)
+            {
+                continue;
+            }
+
+            // Marca que al menos un proceso está siendo procesado en esta iteración.
+            flag = 1;
+
+            // Si el tiempo de llegada del proceso es menor o igual al tiempo actual,
+            // se procesa el proceso durante el quantum de tiempo y se actualiza el tiempo restante.
+            if (pro[i].arrivalTime <= time)
+            {
+                // Marca que el proceso ya ha comenzado.
+                pro[i].state = 1;
+
+                // Si es la primera vez que se ejecuta el proceso,
+                // registra su tiempo de respuesta como el tiempo actual menos su tiempo de llegada.
+                if (pro[i].responseTime == -1)
+                {
+                    pro[i].responseTime = time - pro[i].arrivalTime;
+                }
+
+                
+                int flag2=0;
+                for(int j=1; j<=pro[i].burstTime; j++) 
+                {
+                    time++; //Se aumenta un segundo al tiempo total
+                    pro[i].remainingTime--; //Se disminuye el remaining time en un segundo 
+
+                    if(pro[i].remainingTime==0)
+                    {
+                        // Registra el tiempo de finalización del proceso.
+                        pro[i].exitTime = time;
+
+                        // Calcula el tiempo de espera del proceso.
+                        pro[i].waitingTime = pro[i].exitTime - pro[i].arrivalTime - pro[i].burstTime;
+
+                        //Calcula el tiempo de turnaround 
+                        pro[i].turnaroundTime = pro[i].exitTime - pro[i].arrivalTime;
+                        
+                        // Calcula los tiempos de espera y de respuesta promedio de todos los procesos.
+                        totalWaitTime += pro[i].waitingTime;
+                        totalResponseTime += pro[i].responseTime;
+                        totalTurnaroundTime += pro[i].turnaroundTime;
+                        
+                        //Cambiar de estado
+                        pro[i].state=2;
+
+                        break;
+                    }
+
+                    /*Chequea si es que ocurre una interrupcion*/
+                    for (int k=0; k<pro[i].numberInterruptions; k++) //Cada interrupción 
+                    {
+                        if(pro[i].burstTime - pro[i].remainingTime == pro[i].interrupts[k].when) //Si el tiempo de la interrupción es el mismo del tiempo actual
+                        {
+                            time+=pro[i].interrupts[k].duration; //Se ocupa de la interrupcion
+                            flag2=1;
+                            break;
+                        }
+                    }
+                    if(flag2==1)
+                    {
+                        break;
+                    }
+                }
+            }
+            // Si el tiempo de llegada del proceso es mayor que el tiempo actual
+            else
+            {
+                //Si los procesos anteriores ya iniciaron y el que se encuentra ahora todavía no llega la cola de ready
+                if(i>0 && pro[i-1].state==1 && pro[i].state==0)
+                {
+                    quicksort(pro,0,i-1,2);
+                    i=-1;
+                }
+                else
+                {
+                    time++;
+                    i--;
+                }
+            
+            }
+        }
+        // Si ningún proceso se procesó en esta iteración,
+        // significa que todos los procesos se han completado.
+        if(flag==0)
+        {
+            break;
+        }
+    }
+
+    // Calcula el tiempo de respuesta promedio.
+    float avgResponseTime = (float)totalResponseTime / (float)n;
+
+    // Calcula el tiempo de espera promedio.
+    float avgWaitTime = (float)totalWaitTime / (float)n;
+
+    //Calcula el turnaround time promedio
+    float avgTurnaroundTime = (float)totalTurnaroundTime /(float)n;
+
+    //Calcula el throughput o rendimiento
+    float throughputTime = (float)n/(float)time;
+
+    // Imprime los resultados.
+    printf("\nProceso\t Tiempo de Llegada\t Tiempo de Ejecución\t Tiempo de Respuesta\t Tiempo Final\t Tiempo de Espera\t \n");
+    for (int i = 0; i < n; i++)
+    {
+        printf("%d\t\t %d\t\t\t %d\t\t\t %d\t\t\t %d\t\t %d\n", pro[i].id, pro[i].arrivalTime, pro[i].burstTime, pro[i].responseTime,pro[i].exitTime , pro[i].waitingTime);
+    }
+    printf("\nTiempo de Respuesta Promedio = %.2f", avgResponseTime);
+    printf("\nTiempo de Espera Promedio = %.2f", avgWaitTime);
+    printf("\nTiempo de Turnaround Promedio = %.2f", avgTurnaroundTime);
+    printf("\nThroughtput = %.2f", throughputTime);
 }
+
 
 int main()
 {
