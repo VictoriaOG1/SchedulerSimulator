@@ -464,23 +464,22 @@ void SJF(struct Process pro[], int n)
     {
         flag = 0; //Se mantiene 0 si todos los procesos terminan
 
+        int l;
+        for(l=0; l<n; l++)
+        {
+            if(pro[l].state==0)
+            {
+                break;
+            }
+        }
+        if(l>1)
+        {
+            quicksort(pro, 0, l, 2);
+        }
+
         //Transversar por cada proceso
         for(int i=0; i<n; i++)
         {
-            int l;
-            for(l=0; i<n; i++)
-            {
-                if(pro[l].state==0)
-                {
-                    break;
-                }
-            }
-            if(l>1)
-            {
-                quicksort(pro, 0, l, 2);
-            }
-
-
             // Si el proceso ya se completó, salta a la siguiente iteración.
             if (pro[i].state == 2)
             {
@@ -511,7 +510,7 @@ void SJF(struct Process pro[], int n)
                     time++; //Se aumenta un segundo al tiempo total
                     pro[i].remainingTime--; //Se disminuye el remaining time en un segundo 
 
-                    if(pro[i].remainingTime==0)
+                    if(pro[i].remainingTime==0) //Si termina el proceso
                     {
                         // Registra el tiempo de finalización del proceso.
                         pro[i].exitTime = time;
