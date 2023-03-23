@@ -175,7 +175,7 @@ void roundRobin(struct Process pro[], int n, int quantum)
         for(int i=0; i<n; i++)
         {
             // Si el proceso ya se completó o si está bloqueado salta a la siguiente iteración.
-            if (pro[i].state == 2 || pro[i].state == -1)
+            if (pro[i].state == 2)
             {
                 continue;
             }
@@ -225,29 +225,14 @@ void roundRobin(struct Process pro[], int n, int quantum)
                         break;
                     }
 
-                    /*Procesos bloqueados se reducen su tiempo de espera*/
-                    for(int m=0; m<n; m++)
-                    {
-                        if(pro[m].state==-1)
-                        {
-                            pro[m].remainingItrTime--;
-
-                            if(pro[m].remainingItrTime==0)
-                            {
-                                pro[m].state==1;
-                            }
-                        }
-                    }
                     
-
                     /*Chequea si es que ocurre una interrupcion*/
                     for (int k=0; k<pro[i].numberInterruptions; k++) //Cada interrupción 
                     {
                         if(pro[i].whenInterrupts[k] == pro[i].burstTime - pro[i].remainingTime)
                         {
                             flag2=1;
-                            pro[i].state=-1;
-                            pro[i].remainingItrTime = pro[i].durationInterupts[k];
+                            time+=pro[i].durationInterupts[k];
                             break;
                         }
                     }
@@ -340,7 +325,7 @@ void FCFS(struct Process pro[], int n)
         for(int i=0; i<n; i++)
         {
             // Si el proceso ya se completó, salta a la siguiente iteración.
-            if (pro[i].state == 2 || pro[i].state == -1)
+            if (pro[i].state == 2)
             {
                 continue;
             }
@@ -391,29 +376,13 @@ void FCFS(struct Process pro[], int n)
                         break;
                     }
 
-                    /*Procesos bloqueados se reducen su tiempo de espera
-                    for(int m=0; m<n; m++)
-                    {
-                        if(pro[m].state==-1)
-                        {
-                            pro[m].remainingItrTime--;
-
-                            if(pro[m].remainingItrTime==0)
-                            {
-                                pro[m].state==1;
-                            }
-                        }
-                    }
-                    */
-
-                    /*Chequea si es que ocurre una interrupcion
+                    /*Chequea si es que ocurre una interrupcion*/
                     for (int k=0; k<pro[i].numberInterruptions; k++) //Cada interrupción 
                     {
                         if(pro[i].whenInterrupts[k] == pro[i].burstTime - pro[i].remainingTime)
                         {
                             flag2=1;
-                            pro[i].state=-1;
-                            pro[i].remainingItrTime = pro[i].durationInterupts[k];
+                            time+=pro[i].durationInterupts[k];
                             break;
                         }
                     }
@@ -421,7 +390,7 @@ void FCFS(struct Process pro[], int n)
                     {
                         break;
                     }
-                    */
+                    
                 }
             }
             // Si el tiempo de llegada del proceso es mayor que el tiempo actual
@@ -500,7 +469,7 @@ void SJF(struct Process pro[], int n)
         for(int i=0; i<n; i++)
         {
             // Si el proceso ya se completó, salta a la siguiente iteración.
-            if (pro[i].state == 2 || pro[i].state==-1)
+            if (pro[i].state == 2)
             {
                 continue;
             }
@@ -561,28 +530,13 @@ void SJF(struct Process pro[], int n)
                         break;
                     }
 
-                    /*Procesos bloqueados se reducen su tiempo de espera*/
-                    for(int m=0; m<n; m++)
-                    {
-                        if(pro[m].state==-1)
-                        {
-                            pro[m].remainingItrTime--;
-
-                            if(pro[m].remainingItrTime==0)
-                            {
-                                pro[m].state==1;
-                            }
-                        }
-                    }
-
                     /*Chequea si es que ocurre una interrupcion*/
                     for (int k=0; k<pro[i].numberInterruptions; k++) //Cada interrupción 
                     {
                         if(pro[i].whenInterrupts[k] == pro[i].burstTime - pro[i].remainingTime)
                         {
                             flag2=1;
-                            pro[i].state=-1;
-                            pro[i].remainingItrTime = pro[i].durationInterupts[k];
+                            time+=pro[i].durationInterupts[k];
                             break;
                         }
                     }
@@ -659,7 +613,6 @@ int main()
     //Crear procesos
     createProcess(pro, n, 1);
 
-    
     //Se ingresa el quantum para el algoritmo de round robin
     printf("Ingrese el quantum para el algoritmo de round robin: ");
     scanf("%d", &quantum);
@@ -679,17 +632,5 @@ int main()
     printf("\nShortest Job First Scheduler: \n");
     SJF(pro, n);
     
-    /*
-    for(int i=0; i<n; i++)
-    {
-        printf("%d\t\t %d\t\t\t %d\t\t\t %d\t\t\t", pro[i].id, pro[i].arrivalTime, pro[i].burstTime, pro[i].responseTime);
-        for(int j=0; j<pro[i].numberInterruptions; j++)
-        {
-            printf("%d ", pro[i].whenInterrupts[j]);
-        }
-        printf("\n");
-    }
-    */
-
     return 0;
 }
