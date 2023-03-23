@@ -25,15 +25,15 @@ void createProcess(struct Process pro[], int n, int condition)
 {
     int n1 = 0;
 
-    if (condition == 1) //50% CPU bound y 50% I/O bound (literal a)
+    if (condition == 1) //50% CPU bound y 50% I/O bound 
     {
         n1 = n*0.5;
     }
-    else if (condition == 2) //90% CPU bound y 10% I/O bound (literal b)
+    else if (condition == 2) //90% CPU bound y 10% I/O bound 
     {
         n1 = n*0.9;
     }
-    else if (condition == 3)//10% CPU bound y 90% I/O bound (literal c)
+    else if (condition == 3)//10% CPU bound y 90% I/O bound 
     {
         n1 = n*0.1;
     }
