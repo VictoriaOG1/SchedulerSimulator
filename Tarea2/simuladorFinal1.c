@@ -159,7 +159,7 @@ void quicksort(struct Process arr[], int low, int high, int type)
         quicksort(arr, pi + 1, high, type);
     }
 }
-/*
+
 //Funcion para simular un scheduler con algoritmo Round Robin 
 void roundRobin(struct Process pro[], int n, int quantum)
 {
@@ -226,7 +226,7 @@ void roundRobin(struct Process pro[], int n, int quantum)
                     }
 
                     
-                    /*Chequea si es que ocurre una interrupcion/*
+                    //Chequea si es que ocurre una interrupcion
                     for (int k=0; k<pro[i].numberInterruptions; k++) //Cada interrupción 
                     {
                         if(pro[i].whenInterrupts[k] == pro[i].burstTime - pro[i].remainingTime)
@@ -308,8 +308,7 @@ void roundRobin(struct Process pro[], int n, int quantum)
     printf("\nTiempo de Turnaround Promedio = %.2f", avgTurnaroundTime);
     printf("\nThroughtput = %.2f\n", throughputTime);
 }
-*/
-/*
+
 //Funcion para simular un scheduler con algoritmo First Come First Served
 void FCFS(struct Process pro[], int n)
 {
@@ -376,7 +375,7 @@ void FCFS(struct Process pro[], int n)
                         break;
                     }
 
-                    /*Chequea si es que ocurre una interrupcion*//*
+                    //Chequea si es que ocurre una interrupcion
                     for (int k=0; k<pro[i].numberInterruptions; k++) //Cada interrupción 
                     {
                         if(pro[i].whenInterrupts[k] == pro[i].burstTime - pro[i].remainingTime)
@@ -440,7 +439,7 @@ void FCFS(struct Process pro[], int n)
     printf("\nTiempo de Turnaround Promedio = %.2f", avgTurnaroundTime);
     printf("\nThroughtput = %.2f", throughputTime);
 }
-*/
+
 //Funcion para simular un scheduler con algoritmo Short Job First
 void SJF(struct Process pro[], int n)
 {
@@ -520,7 +519,7 @@ void SJF(struct Process pro[], int n)
                         break;
                     }
 
-                    /*Chequea si es que ocurre una interrupcion*/
+                    //Chequea si es que ocurre una interrupcion
                     for (int k=0; k<pro[i].numberInterruptions; k++) //Cada interrupción 
                     {
                         if(pro[i].whenInterrupts[k] == pro[i].burstTime - pro[i].remainingTime)
@@ -534,8 +533,6 @@ void SJF(struct Process pro[], int n)
                     {
                         break;
                     }
-                    
-                    
                 }
             }
             // Si el tiempo de llegada del proceso es mayor que el tiempo actual
