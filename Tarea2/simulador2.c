@@ -15,8 +15,8 @@ struct Process
     int turnaroundTime;
     int remainingTime;
     int numberInterruptions;
-    int cuantityInterrupts[8];
     int durationInterupts[8];
+    int whenInterrupts[8];
 };
 
 //Funcion creacion de procesos 
@@ -67,8 +67,8 @@ void createProcess(struct Process pro[], int n, int condition)
             
             //se asigna los segundos en donde se va a interruptir
             for(int j=0; j<n_itrp; j++){
-                 whenTimes[j] = (j+1) * muliple;
-                pro[i].durationInterrupts[j] = whenTimes[j];
+                whenTimes[j] = (j+1) * muliple;
+                pro[i].whenInterrupts[j] = whenTimes[j];
             }
         }
         else if(i > n1) //Procesos I/O bound (muchas interrupciones de poco tiempo)
@@ -79,7 +79,7 @@ void createProcess(struct Process pro[], int n, int condition)
             for(int j=0; j<n_itrp; j++){
                 int duration = rand() % 3 + 1; //Entre 1 y 3
                 //agregarlas al arreglo de interrupciones
-                pro[i].interrupts[j] = duration;
+                pro[i].durationinterrupts[j] = duration;
             }
             
             //determinar el multiplo para seleccionar los en donde se va a interruptir
@@ -87,8 +87,8 @@ void createProcess(struct Process pro[], int n, int condition)
             
             //se asigna los segundos en donde se va a interruptir
             for(int j=0; j<n_itrp; j++){
-                 whenTimes[j] = (j+1) * muliple;
-                pro[i].durationInterrupts[j] = whenTimes[j];
+                whenTimes[j] = (j+1) * muliple;
+                pro[i].whenInterrupts[j] = whenTimes[j];
             }
         }
         else{
