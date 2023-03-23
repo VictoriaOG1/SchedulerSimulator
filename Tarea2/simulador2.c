@@ -453,7 +453,8 @@ void FCFS(struct Process pro[], int n)
     printf("\nThroughtput = %.2f", throughputTime);
 }
 
-void SJF(struct Process pro[], int n) 
+//Funcion para simular un scheduler con algoritmo Short Job First
+void SJF(struct Process pro[], int n)
 {
     int time = 0;
     int flag, totalWaitTime = 0, totalResponseTime = 0, totalTurnaroundTime = 0;
@@ -466,6 +467,20 @@ void SJF(struct Process pro[], int n)
         //Transversar por cada proceso
         for(int i=0; i<n; i++)
         {
+            int l;
+            for(l=0; i<n; i++)
+            {
+                if(pro[l].state==0)
+                {
+                    break;
+                }
+            }
+            if(l>1)
+            {
+                quicksort(pro, 0, l, 2);
+            }
+
+
             // Si el proceso ya se completó, salta a la siguiente iteración.
             if (pro[i].state == 2)
             {
@@ -491,7 +506,7 @@ void SJF(struct Process pro[], int n)
 
                 
                 int flag2=0;
-                for(int j=1; j<=pro[i].burstTime; j++) 
+                for(int j=1; j<=pro[i].burstTime; j++) //Cada segundo del quantum
                 {
                     time++; //Se aumenta un segundo al tiempo total
                     pro[i].remainingTime--; //Se disminuye el remaining time en un segundo 
@@ -540,14 +555,11 @@ void SJF(struct Process pro[], int n)
                 //Si los procesos anteriores ya iniciaron y el que se encuentra ahora todavía no llega la cola de ready
                 if(i>0 && pro[i-1].state==1 && pro[i].state==0)
                 {
-                    quicksort(pro,0,i-1,2);
                     i=-1;
                 }
-                else
-                {
-                    time++;
-                    i--;
-                }
+                
+                time++;
+                i--;
             
             }
         }
@@ -584,38 +596,26 @@ void SJF(struct Process pro[], int n)
 }
 
 
+
 int main()
 {
-
+    //Variables
     int i, n, quantum;
 
     // Ingreso de datos: numero de procesos, el burst time. el arrival time de cada proceso y el quantum
     printf("Ingrese el número de proceso: ");
     scanf("%d", &n);
 
+    //Creación de arreglo de procesos
     struct Process pro[n];
 
-    srand(time(NULL)); //Instrucción que inicializa el generador de números aleatorios
-    
-    /*
-    for (i = 0; i < n; i++)
-    {
-        printf("Ingrese el tiempo de llegada para el proceso %d: ", i + 1);
-        scanf("%d", &pro[i].arrivalTime);
-        printf("Ingrese el tiempo de CPU para el proceso %d: ", i + 1);
-        scanf("%d", &pro[i].burstTime);
-        pro[i].id = i + 1;
-        pro[i].state = 0; // Procesos no inicializados
-        pro[i].responseTime = -1;
-        // Inicializa el tiempo restante del proceso como su tiempo de ejecucion.
-        pro[i].remainingTime = pro[i].burstTime;
-    
-    }
-    */
+    //Instrucción que inicializa el generador de números aleatorios
+    srand(time(NULL)); 
 
-   //Crear procesos
+    //Crear procesos
     createProcess(pro, n, 0);
-    
+
+    //Se ingresa el quantum para el algoritmo de round robin
     printf("Ingrese el quantum para el algoritmo de round robin: ");
     scanf("%d", &quantum);
 
