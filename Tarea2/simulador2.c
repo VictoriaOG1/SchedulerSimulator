@@ -271,7 +271,7 @@ void FCFS(struct Process pro[], int n)
     int time = 0;
     int flag, totalWaitTime = 0, totalResponseTime = 0, totalTurnaroundTime = 0;
 
-    //Ejercutar el round robin hasta que todos los procesos hayan terminado
+    //Ejercutar el FCFS hasta que todos los procesos hayan terminado
     while(1)
     {
         flag = 0; //Se mantiene 0 si todos los procesos terminan
@@ -301,9 +301,9 @@ void FCFS(struct Process pro[], int n)
                 {
                     pro[i].responseTime = time - pro[i].arrivalTime;
                 }
-
-                
+              
                 int flag2=0;
+                
                 for(int j=1; j<=pro[i].burstTime; j++) 
                 {
                     time++; //Se aumenta un segundo al tiempo total
@@ -401,7 +401,7 @@ void SJF(struct Process pro[], int n)
     int time = 0;
     int flag, totalWaitTime = 0, totalResponseTime = 0, totalTurnaroundTime = 0;
 
-    //Ejercutar el round robin hasta que todos los procesos hayan terminado
+    //Ejercutar el SJF hasta que todos los procesos hayan terminado
     while(1)
     {
         flag = 0; //Se mantiene 0 si todos los procesos terminan
