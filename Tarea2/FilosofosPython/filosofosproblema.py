@@ -37,9 +37,10 @@ class Filosofo(threading.Thread):
         palillo1.release()
 
     def comer(self):
-        print(f"Filosofo {self.index} esta comiendo")
+
+        print("Filosofo "+str(self.index) + " esta comiendo\n")
         time.sleep(1)
-        print(f"Filosofo {self.index} esta pensando")
+        print("Filosofo "+str(self.index) + " esta pensando\n")
 
 def Cenafilosofos():
     filosofos = []
@@ -49,16 +50,10 @@ def Cenafilosofos():
 
     for i in range(5):
        filosofos.append(Filosofo(i, palillos[i], palillos[(i+1)%5]))
-       print(f"Filosofo {i} esta pensando")
+       print("Filosofo " + str(i) + " esta pensando\n")
 
-    random.seed(42)
     for p in filosofos:
         p.start()
-
-    # No hay tiempo de espera o límite de tiempo de ejecución
-    while True:
-        pass
-        
 
 if __name__ == "__main__":
     Cenafilosofos()
