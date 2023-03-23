@@ -34,7 +34,9 @@ void* filosofo(void* arg) {
 int main() {
     int i;
     pthread_t filosofos[NUM_FILOSOFOS];
+    int ids[NUM_FILOSOFOS];
 
+   
     // Inicializar mutex para cada palillo
     for (i = 0; i < NUM_FILOSOFOS; i++) {
         pthread_mutex_init(&palillos[i], NULL);
@@ -42,7 +44,8 @@ int main() {
 
     // Crear hilos para cada filosofo
     for (i = 0; i < NUM_FILOSOFOS; i++) {
-        pthread_create(&filosofos[i], NULL, filosofo, (void*)&i);  
+    	ids[i] = i;  // Inicializar los IDs de los filósofos
+        pthread_create(&filosofos[i], NULL, filosofo, &ids[i]);  
     }
 
     // Esperar a que los hilos terminen
