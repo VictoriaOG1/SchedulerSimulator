@@ -28,6 +28,7 @@ public class Philosopher{
                     System.out.println("Phil: " + _id + " started eating now");
                     try {wait(500);}
                     catch (InterruptedException e) {e.printStackTrace();}
+                    Observer.returnForks(_id);
                     System.out.println("Phil: " + _id + " finished eating, now thinking");
                     try {wait(500);}
                     catch (InterruptedException e) {e.printStackTrace();}
