@@ -322,7 +322,7 @@ void roundRobin(struct Process pro[], int n, int quantum)
     printf("\nTiempo de Respuesta Promedio = %.2f", avgResponseTime);
     printf("\nTiempo de Espera Promedio = %.2f", avgWaitTime);
     printf("\nTiempo de Turnaround Promedio = %.2f", avgTurnaroundTime);
-    printf("\nThroughtput = %.2f\n", throughputTime);
+    printf("\nThroughtput = %.4f\n", throughputTime);
 }
 
 
@@ -489,7 +489,7 @@ void FCFS(struct Process pro[], int n)
     printf("\nTiempo de Respuesta Promedio = %.2f", avgResponseTime);
     printf("\nTiempo de Espera Promedio = %.2f", avgWaitTime);
     printf("\nTiempo de Turnaround Promedio = %.2f", avgTurnaroundTime);
-    printf("\nThroughtput = %.2f\n", throughputTime);
+    printf("\nThroughtput = %.4f\n", throughputTime);
 }
 
 //Funcion para simular un scheduler con algoritmo Short Job First
@@ -666,7 +666,7 @@ void SJF(struct Process pro[], int n)
     printf("\nTiempo de Respuesta Promedio = %.2f", avgResponseTime);
     printf("\nTiempo de Espera Promedio = %.2f", avgWaitTime);
     printf("\nTiempo de Turnaround Promedio = %.2f", avgTurnaroundTime);
-    printf("\nThroughtput = %.2f\n", throughputTime);
+    printf("\nThroughtput = %.4f\n", throughputTime);
 }
 
 
