@@ -293,7 +293,7 @@ void roundRobin(struct Process pro[], int n, int quantum)
                     }
                 }
             }
-            if(flag3==0)
+            if(flag3==1)
             {
                 break;
             } 

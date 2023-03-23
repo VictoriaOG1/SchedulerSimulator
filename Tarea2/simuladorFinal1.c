@@ -159,7 +159,7 @@ void quicksort(struct Process arr[], int low, int high, int type)
         quicksort(arr, pi + 1, high, type);
     }
 }
-
+/*
 //Funcion para simular un scheduler con algoritmo Round Robin 
 void roundRobin(struct Process pro[], int n, int quantum)
 {
@@ -226,7 +226,7 @@ void roundRobin(struct Process pro[], int n, int quantum)
                     }
 
                     
-                    /*Chequea si es que ocurre una interrupcion*/
+                    /*Chequea si es que ocurre una interrupcion/*
                     for (int k=0; k<pro[i].numberInterruptions; k++) //Cada interrupción 
                     {
                         if(pro[i].whenInterrupts[k] == pro[i].burstTime - pro[i].remainingTime)
@@ -308,8 +308,8 @@ void roundRobin(struct Process pro[], int n, int quantum)
     printf("\nTiempo de Turnaround Promedio = %.2f", avgTurnaroundTime);
     printf("\nThroughtput = %.2f\n", throughputTime);
 }
-
-
+*/
+/*
 //Funcion para simular un scheduler con algoritmo First Come First Served
 void FCFS(struct Process pro[], int n)
 {
@@ -376,7 +376,7 @@ void FCFS(struct Process pro[], int n)
                         break;
                     }
 
-                    /*Chequea si es que ocurre una interrupcion*/
+                    /*Chequea si es que ocurre una interrupcion*//*
                     for (int k=0; k<pro[i].numberInterruptions; k++) //Cada interrupción 
                     {
                         if(pro[i].whenInterrupts[k] == pro[i].burstTime - pro[i].remainingTime)
@@ -440,7 +440,7 @@ void FCFS(struct Process pro[], int n)
     printf("\nTiempo de Turnaround Promedio = %.2f", avgTurnaroundTime);
     printf("\nThroughtput = %.2f", throughputTime);
 }
-
+*/
 //Funcion para simular un scheduler con algoritmo Short Job First
 void SJF(struct Process pro[], int n)
 {
@@ -451,19 +451,6 @@ void SJF(struct Process pro[], int n)
     while(1)
     {
         flag = 0; //Se mantiene 0 si todos los procesos terminan
-
-        int l;
-        for(l=0; l<n; l++)
-        {
-            if(pro[l].state==0)
-            {
-                break;
-            }
-        }
-        if(l>1)
-        {
-            quicksort(pro, 0, l, 2);
-        }
 
         //Transversar por cada proceso
         for(int i=0; i<n; i++)
@@ -481,6 +468,7 @@ void SJF(struct Process pro[], int n)
             // se procesa el proceso durante el quantum de tiempo y se actualiza el tiempo restante.
             if (pro[i].arrivalTime <= time)
             {
+                
                 int l;
                 for(l=i; l<n; l++)
                 {
@@ -489,8 +477,10 @@ void SJF(struct Process pro[], int n)
                         break;
                     }
                 }
-                quicksort(pro,i,l,2);
-
+                
+                printf("\ni= %d, l=%d", i, l);
+                quicksort(pro,i,l-1,2);
+                
                 // Marca que el proceso ya ha comenzado.
                 pro[i].state = 1;
 
@@ -544,6 +534,8 @@ void SJF(struct Process pro[], int n)
                     {
                         break;
                     }
+                    
+                    
                 }
             }
             // Si el tiempo de llegada del proceso es mayor que el tiempo actual
@@ -590,7 +582,7 @@ void SJF(struct Process pro[], int n)
     printf("\nTiempo de Respuesta Promedio = %.2f", avgResponseTime);
     printf("\nTiempo de Espera Promedio = %.2f", avgWaitTime);
     printf("\nTiempo de Turnaround Promedio = %.2f", avgTurnaroundTime);
-    printf("\nThroughtput = %.2f", throughputTime);
+    printf("\nThroughtput = %.2f\n", throughputTime);
 }
 
 
@@ -622,11 +614,11 @@ int main()
 
     //Scheduling con Round Robin
     printf("\nRound Robin Scheduler: \n");
-    roundRobin(pro, n, quantum);
+    //roundRobin(pro, n, quantum);
 
     //Scheduling con FIFO 
     printf("\nFirst Come First Served Scheduler: \n");
-    FCFS(pro,n);
+    //FCFS(pro,n);
 
     //Scheduling con SJF
     printf("\nShortest Job First Scheduler: \n");
