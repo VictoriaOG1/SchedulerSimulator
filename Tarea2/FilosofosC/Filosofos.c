@@ -8,7 +8,7 @@
 pthread_mutex_t palillos[NUM_FILOSOFOS];
 
 void* filosofo(void* arg) {
-    int id = *((int*)arg);
+    int id = ((int)arg);
     int izq = id;
     int der = (id + 1) % NUM_FILOSOFOS;
 
