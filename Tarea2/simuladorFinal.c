@@ -15,7 +15,7 @@ struct Process
     int turnaroundTime;
     int remainingTime;
     int numberInterruptions;
-    int remainingItrTime;
+    int remainingItrTime; 
     int durationInterupts[8];
     int whenInterrupts[8];
 };
@@ -274,7 +274,7 @@ void roundRobin(struct Process pro[], int n, int quantum)
             }
         }
         // Si ningún proceso se procesó en esta iteración,
-        // significa que todos los procesos se han completado.
+        // significa que todos los procesos se han completado o todos los procesos están bloqueados o algunos compleatdos y otros bloqueados 
         if(flag==0)
         {
             
@@ -285,7 +285,7 @@ void roundRobin(struct Process pro[], int n, int quantum)
             {
                 if(pro[p].state==-1)
                 {
-                    flag3=1;
+                    flag3=1; //Si algun proceso esta bloqueado que no termine el while 
                     pro[p].remainingItrTime--;
 
                     if(pro[p].remainingItrTime<=0)
@@ -442,7 +442,7 @@ void FCFS(struct Process pro[], int n)
             }
         }
         // Si ningún proceso se procesó en esta iteración,
-        // significa que todos los procesos se han completado.
+        // significa que todos los procesos se han completado o todos los procesos están bloqueados o algunos compleatdos y otros bloqueados 
         if(flag==0)
         {
             time++;
@@ -619,7 +619,7 @@ void SJF(struct Process pro[], int n)
             }
         }
         // Si ningún proceso se procesó en esta iteración,
-        // significa que todos los procesos se han completado.
+        // significa que todos los procesos se han completado o todos los procesos están bloqueados o algunos compleatdos y otros bloqueados 
         if(flag==0)
         {
             time++;
