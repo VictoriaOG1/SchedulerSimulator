@@ -38,7 +38,7 @@ void createProcess(struct Process pro[], int n, int condition)
         n1 = n*0.1;
     }
     else{
-        printf("Warning no se asigno la razon de bounds");
+        printf("Warning no se asigno la razon de bounds\n");
     }
 
     for(int i=0; i<n; i++) //Llena la informacion de cada proceso (uno a uno)
@@ -100,7 +100,7 @@ void createProcess(struct Process pro[], int n, int condition)
             }
         }
         else{
-            printf("Error, asignar la razon de bounds");
+            printf("Error, asignar la razon de bounds\n");
         }
     }
 }
@@ -674,11 +674,16 @@ void SJF(struct Process pro[], int n)
 int main()
 {
     //Variables
-    int i, n, quantum;
+    int n, literal, quantum;
 
     // Ingreso de datos: numero de procesos, el burst time. el arrival time de cada proceso y el quantum
     printf("Ingrese el número de proceso: ");
     scanf("%d", &n);
+
+    // Ingreso de datos: numero de literal para saber el porcentaje de razon de los procesos IO o CPU Bound
+    // 1 = 50% CPU y 50% IO, 2 = 90% CPU y 10% IO, 3 = 10% CPU, 90% IO
+    printf("Ingrese el número literal de la razon de Bounds: ");
+    scanf("%d", &literal);
 
     //Creación de arreglos de procesos
     struct Process pro[n];
@@ -689,7 +694,7 @@ int main()
     srand(time(NULL)); 
 
     //Crear procesos
-    createProcess(pro, n, 1);
+    createProcess(pro, n, literal);
 
     //Copia de procesos 
     for(int x=0; x<n; x++)
