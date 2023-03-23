@@ -59,7 +59,7 @@ void createProcess(struct Process pro[], int n, int condition)
             for(int j=0; j<n_itrp; j++){
                 int duration = rand() % 6 + 3; //Entre 3 y 6
                 //agregarlas al arreglo de interrupciones
-                pro[i].durationInterrupts[j] = duration;
+                pro[i].durationInterupts[j] = duration;
             }
             
             //determinar el multiplo para seleccionar los en donde se va a interruptir
@@ -67,8 +67,7 @@ void createProcess(struct Process pro[], int n, int condition)
             
             //se asigna los segundos en donde se va a interruptir
             for(int j=0; j<n_itrp; j++){
-                whenTimes[j] = (j+1) * muliple;
-                pro[i].whenInterrupts[j] = whenTimes[j];
+                pro[i].whenInterrupts[j] = (j+1) * multiple;
             }
         }
         else if(i > n1) //Procesos I/O bound (muchas interrupciones de poco tiempo)
@@ -79,16 +78,15 @@ void createProcess(struct Process pro[], int n, int condition)
             for(int j=0; j<n_itrp; j++){
                 int duration = rand() % 3 + 1; //Entre 1 y 3
                 //agregarlas al arreglo de interrupciones
-                pro[i].durationinterrupts[j] = duration;
+                pro[i].durationInterupts[j] = duration;
             }
             
             //determinar el multiplo para seleccionar los en donde se va a interruptir
-             int multiple = pro[i].burstTime / n_itrp;
+            int multiple = pro[i].burstTime / n_itrp;
             
             //se asigna los segundos en donde se va a interruptir
             for(int j=0; j<n_itrp; j++){
-                whenTimes[j] = (j+1) * muliple;
-                pro[i].whenInterrupts[j] = whenTimes[j];
+                pro[i].whenInterrupts[j] = (j+1) * multiple;
             }
         }
         else{
