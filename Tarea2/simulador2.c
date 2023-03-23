@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 
 // Estructura de nuestro proceso
@@ -14,16 +15,7 @@ struct Process
     int turnaroundTime;
     int remainingTime;
     int numberInterruptions;
-    struct Interupts *interrupts;
-};
-
-
-// Estructura para las interrupciones
-struct Interupts
-{
-    int id;
-    int duration;
-    int when; //en que segundo del proceso va a ocurrir la interrupcion
+    int interrupts[8];
 };
 
 //Funcion creacion de procesos 
@@ -39,15 +31,13 @@ void createProcess(struct Process pro[], int n, int condition)
     {
         n1 = n*0.9;
     }
-    else if (condition == 3) //10% CPU bound y 90% I/O bound (literal c)
+    else if (condition == 3)//10% CPU bound y 90% I/O bound (literal c)
     {
         n1 = n*0.1;
     }
     else{
         printf("Warning no se asigno la razon de bounds");
     }
-
-    n1 = -1;
 
     for(int i=0; i<n; i++) //Llena la informacion de cada proceso (uno a uno)
     {
@@ -60,76 +50,28 @@ void createProcess(struct Process pro[], int n, int condition)
         //se asigno -1 al response time para saber si hay algun un error
         pro[i].responseTime = -1;
 
-        if (i > 0 && i <= n1) //Procesos CPU bound (pocas interrupiones de mucho tiempo)
+        if (n1 > 0 && i <= n1) //Procesos CPU bound (pocas interrupiones de mucho tiempo)
         {
             int n_itrp = rand() % 4 + 1; //Número de interrupciones aleatorio entre 1 y 4
-            struct Interupts itrp[n_itrp]; //Arreglo de interrupciones
-            int whenTimes[n_itrp]; //Areglo de tiempos de interrupcion que ya estan
 
-            //Se asigna un valor aleatorio de tiempo a cada interrupcion y su id
+            //Se asigna un valor aleatorio de tiempo a cada interrupcion
             for(int j=0; j<n_itrp; j++){
-                itrp[j].id = j+1;
-                itrp[j].duration = rand() % 6 + 3; //Entre 3 y 6
+                int duration = rand() % 6 + 3; //Entre 3 y 6
+                //agregarlas al arreglo de interrupciones
+                pro[i].interrupts[j] = duration;
             }
-
-            //Se asigna aleatoreamente cuando va a ocurrir las interrupciones
-            for(int j=0; j<n_itrp; j++){
-                int whenItrp = rand() % pro[i].burstTime + 1; //Entre 1 y brustTime del proceso
-                int whenExists = 0;
-                for (int k = 0; k < j; k++){
-                    if(whenTimes[k] == whenItrp){
-                        whenExists = 1;
-                        break;
-                    }
-                }
-
-                if (!whenExists){
-                    whenTimes[j] = whenItrp;
-                    itrp[j].when = whenItrp;
-                }
-                else{
-                    i--;
-                }
-            }
-
-            pro[i].interrupts = malloc(n_itrp * sizeof(struct Interupts)); 
-            pro[i].interrupts = itrp;
 
         }
         else if(i > n1) //Procesos I/O bound (muchas interrupciones de poco tiempo)
         {
             int n_itrp = rand() % 8 + 4; //Número de interrupciones aleatorio entre 4 y 8
-            struct Interupts itrp[n_itrp]; //Arreglo de interrupciones
-            int whenTimes[n_itrp]; //Areglo de tiempos de interrupcion que ya estan
 
             //Se asigna un valor aleatorio de tiempo a cada interrupcion y su id
             for(int j=0; j<n_itrp; j++){
-                itrp[j].id = j+1;
-                itrp[j].duration = rand() % 3 + 1; //Entre 1 y 3
+                int duration = rand() % 3 + 1; //Entre 1 y 3
+                //agregarlas al arreglo de interrupciones
+                pro[i].interrupts[j] = duration;
             }
-
-            //Se asigna aleatoreamente cuando va a ocurrir las interrupciones
-            for(int j=0; j<n_itrp; j++){
-                int whenItrp = rand() % pro[i].burstTime + 1; //Entre 1 y brustTime del proceso
-                int whenExists = 0;
-                for (int k = 0; k < j; k++){
-                    if(whenTimes[k] == whenItrp){
-                        whenExists = 1;
-                        break;
-                    }
-                }
-
-                if (!whenExists){
-                    whenTimes[j] = whenItrp;
-                    itrp[j].when = whenItrp;
-                }
-                else{
-                    i--;
-                }
-            }
-
-            pro[i].interrupts = malloc(n_itrp * sizeof(struct Interupts)); 
-            pro[i].interrupts = itrp;
         }
         else{
             printf("Error, asignar la razon de bounds");
