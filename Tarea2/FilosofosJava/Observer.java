@@ -3,15 +3,11 @@ package FilosofosJava;
 import java.util.*;
 
 public class Observer{
-    private static Observer Instance = new Observer();
+    private static int dequeue;
     private static ArrayList<Integer> queue = new ArrayList<>();
     static boolean[] forks = {true,true,true,true,true};
 
     private Observer(){}
-
-    public static Observer getObserver(){
-        return Instance;
-    }
 
     public static synchronized int requestToEat(int PhilosopherId){
         if(forks[PhilosopherId] & forks[(PhilosopherId+1)%5]){
@@ -27,7 +23,7 @@ public class Observer{
             do{
                 try {Observer.class.wait();}
                 catch (InterruptedException e) {e.printStackTrace();}
-            }while(queue.get(0) != PhilosopherId);
+            }while(dequeue != PhilosopherId);
             return 1;
         }
     }
@@ -38,11 +34,13 @@ public class Observer{
         for(int i = 0; i<queue.size(); i++){
             if(forks[queue.get(i)] & forks[(queue.get(i)+1)%5]){
                 System.out.println("--Phil: " + queue.get(i) + " has been notified");
-                queue.add(0,queue.remove(i));
+                dequeue = queue.remove(i);
                 Observer.class.notifyAll();
-                queue.remove(0);
                 break;
             }
         }
+    }
+    public static void printQueue(){
+        System.out.println(queue);
     }
 }

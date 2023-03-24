@@ -32,7 +32,7 @@ public class Philosopher{
                     try {Thread.sleep(500);}
                     catch (InterruptedException e) {e.printStackTrace();}
                     _eating = false;
-                    if(FinishedEating()){System.out.println("Phil: " + _id + " is done Eating for the day!");}
+                    if(FinishedEating()){System.out.println("Phil: " + _id + " is done Eating for the day!");Observer.printQueue();}
                     else{System.out.println("Phil: " + _id + " is hungry now");}
                 }
             }else{
