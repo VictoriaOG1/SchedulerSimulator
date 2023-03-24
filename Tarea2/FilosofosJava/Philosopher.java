@@ -1,7 +1,5 @@
 package FilosofosJava;
 
-// import java.lang.*;
-
 public class Philosopher{
     private int _id;
     // private Observer observer = Observer.getObserver();
