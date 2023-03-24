@@ -1,6 +1,5 @@
 package Tarea2.Java;
 
-import java.util.LinkedList;
 import java.util.*;
 
 public class Observer{
@@ -33,6 +32,8 @@ public class Observer{
         for(int i = 0; i<5; i++){
             if(forks[queue.get(i)] & forks[(queue.get(i)+1)%5]){
                 // notify phil
+                javaPhil.philosophers[i].notify();
+                break;
             }
         }
     }
