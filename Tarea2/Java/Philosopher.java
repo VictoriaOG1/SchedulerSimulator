@@ -1,5 +1,3 @@
-package Tarea2.Java;
-
 public class Philosopher{
     private int _id;
     // private Observer observer = Observer.getObserver();
