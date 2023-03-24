@@ -1,5 +1,3 @@
-package Tarea2.Java;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -18,4 +16,3 @@ public class javaPhil {
         exe.shutdown();
     }
 }
-
