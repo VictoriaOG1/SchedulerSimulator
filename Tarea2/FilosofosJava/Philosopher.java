@@ -27,7 +27,6 @@ public class Philosopher{
                 if(Observer.requestToEat(getId()) == 0){
                     _eating = true;
                     _mealsLeft--;
-                    System.out.println("Phil: " + _id + " started eating now");
                     try {Thread.sleep(500);}
                     catch (InterruptedException e) {e.printStackTrace();}
                     Observer.returnForks(_id);
