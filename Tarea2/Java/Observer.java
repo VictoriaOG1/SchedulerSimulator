@@ -1,5 +1,3 @@
-package Tarea2.Java;
-
 import java.util.*;
 
 public class Observer{
