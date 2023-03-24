@@ -22,17 +22,17 @@ public class Philosopher{
     private synchronized void run(){
         while(!FinishedEating()){
             if(!_eating){
-                if(Observer.requestToEat(getId()) == 0){
+                if(Monitor.requestToEat(getId()) == 0){
                     _eating = true;
                     _mealsLeft--;
                     try {Thread.sleep(500);}
                     catch (InterruptedException e) {e.printStackTrace();}
-                    Observer.returnForks(_id);
+                    Monitor.returnForks(_id);
                     System.out.println("Phil: " + _id + " finished eating, now thinking");
                     try {Thread.sleep(500);}
                     catch (InterruptedException e) {e.printStackTrace();}
                     _eating = false;
-                    if(FinishedEating()){System.out.println("Phil: " + _id + " is done Eating for the day!");Observer.printQueue();}
+                    if(FinishedEating()){System.out.println("Phil: " + _id + " is done Eating for the day!");Monitor.printQueue();}
                     else{System.out.println("Phil: " + _id + " is hungry now");}
                 }
             }else{

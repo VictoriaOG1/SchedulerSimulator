@@ -2,12 +2,12 @@ package FilosofosJava;
 
 import java.util.*;
 
-public class Observer{
+public class Monitor{
     private static int dequeue;
     private static ArrayList<Integer> queue = new ArrayList<>();
     static boolean[] forks = {true,true,true,true,true};
 
-    private Observer(){}
+    private Monitor(){}
 
     public static synchronized int requestToEat(int PhilosopherId){
         if(forks[PhilosopherId] & forks[(PhilosopherId+1)%5]){
@@ -21,7 +21,7 @@ public class Observer{
             }
             System.out.println("Phil: " + PhilosopherId + " has to wait to eat and it's on queue");
             do{
-                try {Observer.class.wait();}
+                try {Monitor.class.wait();}
                 catch (InterruptedException e) {e.printStackTrace();}
             }while(dequeue != PhilosopherId);
             return 1;
@@ -35,7 +35,7 @@ public class Observer{
             if(forks[queue.get(i)] & forks[(queue.get(i)+1)%5]){
                 System.out.println("--Phil: " + queue.get(i) + " has been notified");
                 dequeue = queue.remove(i);
-                Observer.class.notifyAll();
+                Monitor.class.notifyAll();
                 break;
             }
         }
